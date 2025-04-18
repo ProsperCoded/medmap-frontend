@@ -1,11 +1,11 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 
-const Login = () => {
+const Signup = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <motion.div
-        className="login-container font-sans text-center p-8 bg-white shadow-lg rounded-xl w-full max-w-md"
+        className="signup-container font-sans text-center p-8 bg-white shadow-lg rounded-xl w-full max-w-md"
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
@@ -93,10 +93,25 @@ const Login = () => {
             Med<span className="heading text-[#22c3dd] text-xl">Map</span>
           </p>
         </div>
-        <h2 className="text-3xl mt-3 text-gray-800 font-semibold">Welcome Back</h2>
-        <p className="text-gray-600 mt-1">Sign in to your account</p>
+
+        <h2 className="text-3xl mt-3 text-gray-800 font-semibold">
+          Create Account
+        </h2>
+        <p className="text-gray-600 mt-1">Sign up to get started</p>
 
         <form className="mt-6 text-left space-y-4">
+          <div>
+            <label htmlFor="name" className="block mb-1 text-gray-700">
+              Full Name
+            </label>
+            <input
+              type="text"
+              id="name"
+              placeholder="John Doe"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#22c3dd]"
+            />
+          </div>
+
           <div>
             <label htmlFor="email" className="block mb-1 text-gray-700">
               Email
@@ -116,31 +131,41 @@ const Login = () => {
             <input
               type="password"
               id="password"
-              placeholder="Enter your password"
+              placeholder="••••••••"
               className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#22c3dd]"
             />
           </div>
 
-          <div className="text-right">
-            <a href="#" className="text-[#22c3dd] hover:underline text-sm">
-              Forgot password?
-            </a>
+          <div>
+            <label
+              htmlFor="confirmPassword"
+              className="block mb-1 text-gray-700"
+            >
+              Confirm Password
+            </label>
+            <input
+              type="password"
+              id="confirmPassword"
+              placeholder="••••••••"
+              className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#22c3dd]"
+            />
           </div>
 
-          <motion.button
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.98 }}
+          <button
             type="submit"
-            className="w-full p-3 bg-[#22c3dd] text-white rounded-lg font-semibold hover:bg-[#1bb2cc] transition-all"
+            className="w-full py-3 mt-2 bg-[#22c3dd] text-white rounded-lg hover:bg-[#1baac5] transition duration-300"
           >
-            Sign in
-          </motion.button>
+            Sign Up
+          </button>
         </form>
 
-        <p className="mt-6 text-gray-600 text-sm">
-          Don&apos;t have an account?{" "}
-          <Link to={"/auth/signup"}  className="text-[#22c3dd] hover:underline">
-            Register
+        <p className="mt-4 text-sm text-gray-600">
+          Already have an account?{" "}
+          <Link
+            to={"/auth/login"}
+            className="text-[#22c3dd] font-medium hover:underline"
+          >
+            Sign in
           </Link>
         </p>
       </motion.div>
@@ -148,4 +173,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signup;
