@@ -43,7 +43,7 @@ export const userSignUp = async (
 export const userLogin = async (data: LoginProps): Promise<Response<Auth>> => {
   try {
     console.log(data);
-    const response = await api.post<Response<Auth>>("/auth/login", data);
+    const response = await api.post<Response<Auth>>("/auth/user/login", data);
     return response.data;
   } catch (error: any) {
     if (error.response?.data) {

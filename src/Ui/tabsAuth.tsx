@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import { LoginProps, userLogin } from "../api/Client/auth.api";
 import { toast } from "react-hot-toast";
+import { storeSession } from "../lib/utils";
+import { useAuth } from "../context/authContext";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -36,6 +38,8 @@ function a11yProps(index: number) {
 }
 
 const ClientLoginForm = () => {
+  const { setUser, setIsAuthenticated } = useAuth();
+
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [formData, setFormData] = React.useState<LoginProps>();
@@ -55,9 +59,12 @@ const ClientLoginForm = () => {
 
         if (response.error) {
           toast.error(response.error?.cause); // Show error toast if response has an error
-        } else {
-          // Handle successful login here
-          toast.success("Login successful!");
+        }
+        if (response.status === "success") {
+          toast.success(response.message);
+          setUser(response.data);
+          setIsAuthenticated(true);
+          storeSession(response.data.token);
           navigate("/homepage");
         }
       } catch (error) {
@@ -105,6 +112,7 @@ const ClientLoginForm = () => {
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.98 }}
           type="submit"
+          disabled={isLoading}
           className="w-full p-3 bg-[#22c3dd] text-white rounded-lg font-semibold hover:bg-[#1bb2cc] transition-all"
         >
           {isLoading ? "Sumbitting..." : "Sign in"}
