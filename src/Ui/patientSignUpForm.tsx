@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Logo from "../Components/Logo";
+import { userSignUp } from "../api/Client/auth.api";
+import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/authContext";
+import { storeSession } from "../lib/utils";
 
 const PatientSignUpForm = () => {
   const [formData, setFormData] = useState({
@@ -10,6 +15,10 @@ const PatientSignUpForm = () => {
     password: "",
   });
 
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const navigate = useNavigate();
+  const { setUser, setIsAuthenticated } = useAuth();
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
     setFormData((prev) => ({
@@ -18,11 +27,26 @@ const PatientSignUpForm = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // You can replace this with your API call
-    alert(`Form submitted: ${JSON.stringify(formData)}`);
+    setIsLoading(true);
+    try {
+      const response = await userSignUp(formData);
+      if (response.error) {
+        toast.error(response.message);
+      }
+      if (response.status === "success") {
+        toast.success(response.message);
+        setUser(response.data);
+        setIsAuthenticated(true);
+        storeSession(response.data.token);
+        navigate("/homepage");
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -113,9 +137,10 @@ const PatientSignUpForm = () => {
 
         <button
           type="submit"
+          disabled={isLoading}
           className="w-full py-3 bg-[#22c3dd] text-white font-semibold rounded-lg hover:bg-[#1baac5] transition duration-300"
         >
-          Sign Up
+          {isLoading ? "Sumbitting..." : "Sign up"}
         </button>
       </form>
     </motion.div>

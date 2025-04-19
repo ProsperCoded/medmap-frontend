@@ -1,12 +1,12 @@
 import { motion } from "framer-motion";
 import Logo from "../Components/Logo";
 import FullWidthTabs from "../Ui/tabsAuth";
-import Person from "../../public/pha.jpg";
+import Person from "../assets/pha.jpg";
 
 const Login = () => {
   return (
-    <div className="h-screen grid grid-cols-2 bg-gray-50">
-      <div className="h-[100vh]">
+    <div className="h-screen grid md:grid-cols-2 grid-cols-1 bg-gray-50">
+      <div className="h-[100vh] hidden md:block">
         <img src={Person} className="h-[100vh] w-full object-cover" alt="" />
       </div>
       <motion.div

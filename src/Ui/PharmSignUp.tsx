@@ -4,7 +4,7 @@ import Logo from "../Components/Logo";
 import LocationIQGeocoder from "./locationIq";
 import { Link } from "react-router-dom";
 
-const PatientSignUpForm = () => {
+const PharmacySignUpForm = () => {
   const [step, setStep] = useState(1);
   const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
   const [formData, setFormData] = useState({
@@ -276,4 +276,4 @@ const InputField = ({
   </div>
 );
 
-export default PatientSignUpForm;
+export default PharmacySignUpForm;

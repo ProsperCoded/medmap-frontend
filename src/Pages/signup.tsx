@@ -2,8 +2,8 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import Logo from "../Components/Logo";
 import PatientSignUpForm from "../Ui/patientSignUpForm";
-import Person from "../../public/ph.jpg";
-import OpenCageGeocoder from "../Ui/PharmSignUp";
+import Person from "../assets/ph.jpg";
+import PharmacySignUpForm from "../Ui/PharmSignUp";
 
 type SignupProps = {
   role: "patient" | "pharmacy";
@@ -76,13 +76,15 @@ const RoleSelection = () => {
 
 const Signup = ({ role }: SignupProps) => {
   return (
-    <div className="h-screen grid grid-cols-2">
-      <div className="">
+    <div className="h-screen grid md:grid-cols-2 grid-cols-1">
+      <div className="hidden md:block">
         <div className="sticky top-0 h-screen">
           <img src={Person} className="h-full w-full object-cover" alt="" />
         </div>
       </div>
-      {role === "patient" ? <PatientSignUpForm /> : <OpenCageGeocoder />}
+      <div className="md:p-1 p-8">
+        {role === "patient" ? <PatientSignUpForm /> : <PharmacySignUpForm />}
+      </div>
     </div>
   );
 };
