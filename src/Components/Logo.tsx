@@ -80,7 +80,7 @@ const Logo = () => {
           ></path>
         </g>
       </svg>
-      <p className="text-lg">
+      <p className="text-lg text-gray-900">
         Med<span className="heading text-[#22c3dd] text-xl">Map</span>
       </p>
     </div>

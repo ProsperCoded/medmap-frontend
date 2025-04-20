@@ -8,12 +8,15 @@ import { AuthProvider } from "./context/authContext";
 import ProtectedRoute from "./Components/auth/protectedRoute";
 import HomePage from "./Pages/users/usersHomePage";
 import SearchPage from "./Pages/users/searchPage";
+import PharmacyAssistant from "./Components/Bot/chatBot";
 
 function App() {
   return (
     <div className="home">
       <AuthProvider>
+        
         <BrowserRouter>
+        <PharmacyAssistant />
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/auth/login" element={<Login />} />

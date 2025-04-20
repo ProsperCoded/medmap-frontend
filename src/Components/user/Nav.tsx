@@ -19,7 +19,7 @@ const Nav = () => {
                 </g>
               </svg>
             </div>
-            <span>Powered</span>
+            <span className="text-gray-900">Powered</span>
           </div>
         </div>
       </div>
