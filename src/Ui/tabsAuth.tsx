@@ -2,7 +2,7 @@ import * as React from "react";
 import { AppBar, Tabs, Tab, Typography, Box } from "@mui/material";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-import { LoginProps, userLogin } from "../api/Client/auth.api";
+import { userLogin } from "../api/Client/auth.api";
 import { toast } from "react-hot-toast";
 import { storeSession } from "../lib/utils";
 import { useAuth } from "../context/authContext";
@@ -39,41 +39,36 @@ function a11yProps(index: number) {
 
 const ClientLoginForm = () => {
   const { setUser, setIsAuthenticated } = useAuth();
-
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
-  const [formData, setFormData] = React.useState<LoginProps>();
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setFormData({
-      email,
-      password,
-    });
     setIsLoading(true);
-    if (formData) {
-      try {
-        const response = await userLogin(formData);
 
-        if (response.error) {
-          toast.error(response.error?.cause); // Show error toast if response has an error
-        }
-        if (response.status === "success") {
-          toast.success(response.message);
-          setUser(response.data);
-          setIsAuthenticated(true);
-          storeSession(response.data.token);
-          navigate("/homepage");
-        }
-      } catch (error) {
-        // Handle any other errors that occur during the login attempt
-        toast.error("An unexpected error occurred.");
-        console.error(error); // Log the error for debugging purposes
-      } finally {
-        setIsLoading(false);
+    try {
+      const response = await userLogin({ email, password });
+      console.log(response);
+
+      if (response.error) {
+        toast.error(response.error?.cause);
       }
+
+      if (response.status === "success") {
+        toast.success(response.message);
+        setUser(response.data);
+        setIsAuthenticated(true);
+        storeSession(response.data.token);
+        navigate("/homepage");
+      }
+    } catch (error) {
+      // Handle any other errors that occur during the login attempt
+      toast.error("An unexpected error occurred.");
+      console.error(error); // Log the error for debugging purposes
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -85,6 +80,7 @@ const ClientLoginForm = () => {
             Email
           </label>
           <input
+            required
             type="email"
             id="email"
             placeholder="you@example.com"
@@ -99,6 +95,7 @@ const ClientLoginForm = () => {
             Password
           </label>
           <input
+            required
             type="password"
             id="password"
             placeholder="Enter your password"
@@ -115,7 +112,7 @@ const ClientLoginForm = () => {
           disabled={isLoading}
           className="w-full p-3 bg-[#22c3dd] text-white rounded-lg font-semibold hover:bg-[#1bb2cc] transition-all"
         >
-          {isLoading ? "Sumbitting..." : "Sign in"}
+          {isLoading ? "Submitting..." : "Sign in"}
         </motion.button>
       </form>
 
@@ -145,6 +142,7 @@ const PharmacyLoginForm = () => {
             Business Email
           </label>
           <input
+            required
             type="email"
             id="email"
             placeholder="you@example.com"
@@ -159,6 +157,7 @@ const PharmacyLoginForm = () => {
             Password
           </label>
           <input
+            required
             type="password"
             id="password"
             placeholder="Enter your password"

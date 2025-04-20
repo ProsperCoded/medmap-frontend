@@ -6,7 +6,8 @@ import Login from "./Pages/Login";
 import Signup from "./Pages/signup";
 import { AuthProvider } from "./context/authContext";
 import ProtectedRoute from "./Components/auth/protectedRoute";
-import HomePage from "./Pages/usersHomePage";
+import HomePage from "./Pages/users/usersHomePage";
+import SearchPage from "./Pages/users/searchPage";
 
 function App() {
   return (
@@ -22,6 +23,14 @@ function App() {
               element={
                 <ProtectedRoute>
                   <HomePage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/search_result"
+              element={
+                <ProtectedRoute>
+                  <SearchPage />
                 </ProtectedRoute>
               }
             />

@@ -2,7 +2,11 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import Logo from "../Components/Logo";
 import LocationIQGeocoder from "./locationIq";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../context/authContext";
+import { pharmacySignUp } from "../api/Pharmacy/auth.api";
+import { toast } from "react-hot-toast";
+import { storeSession } from "../lib/utils";
 
 const PharmacySignUpForm = () => {
   const [step, setStep] = useState(1);
@@ -21,6 +25,10 @@ const PharmacySignUpForm = () => {
       phone: "",
     },
   });
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const navigate = useNavigate();
+  const { setUser, setIsAuthenticated } = useAuth();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -74,10 +82,26 @@ const PharmacySignUpForm = () => {
     if (step > 1) setStep((prev) => prev - 1);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
+
     if (validateStep()) {
-      alert(`Form submitted: ${JSON.stringify(formData)}`);
+      try {
+        const response = await pharmacySignUp(formData);
+        if (response.error) {
+          toast.error(response.message);
+        }
+        if (response.status === "success") {
+          toast.success(response.message);
+          setUser(response.data);
+          setIsAuthenticated(true);
+          storeSession(response.data.token);
+          navigate("/homepage");
+        }
+      } catch (err) {
+        console.log(err);
+      }
     }
   };
 
@@ -117,7 +141,7 @@ const PharmacySignUpForm = () => {
         </div>
       </div>
 
-      <form className="mt-4 space-y-5 text-left" onSubmit={handleSubmit}>
+      <form className="mt-4 space-y-5 text-left">
         <motion.div
           key={step}
           initial={{ opacity: 0, x: 50 }}
@@ -216,7 +240,7 @@ const PharmacySignUpForm = () => {
               Back
             </button>
           )}
-          {step < 3 ? (
+          {step < 3 && (
             <button
               type="button"
               onClick={handleNext}
@@ -224,12 +248,16 @@ const PharmacySignUpForm = () => {
             >
               Next
             </button>
-          ) : (
+          )}
+
+          {step === 3 && (
             <button
               type="submit"
+              onClick={handleSubmit}
+              disabled={isLoading}
               className="flex-1 py-2 bg-[#22c3dd] text-white rounded-lg hover:bg-[#1baac5] transition"
             >
-              Submit
+              {isLoading ? "Sumbitting..." : "Sign up"}
             </button>
           )}
         </div>

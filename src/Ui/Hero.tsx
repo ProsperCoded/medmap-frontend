@@ -4,7 +4,7 @@ import MedicationSearchBar from "../Components/searchBar";
 const Hero = () => {
   return (
     <div
-      className="hero_container p-20 md:h-[400px] h-[600px] flex items-center justify-center"
+      className="hero_container p-20 md:h-[450px] h-[600px] flex items-center justify-center"
       style={{
         background:
           "linear-gradient(163deg, #D3E4FD 24%, #F2FCE2 73%, rgba(207, 240, 173, 1) 98%)",

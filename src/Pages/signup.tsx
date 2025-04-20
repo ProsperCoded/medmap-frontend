@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Logo from "../Components/Logo";
 import PatientSignUpForm from "../Ui/patientSignUpForm";
 import Person from "../assets/ph.jpg";
 import PharmacySignUpForm from "../Ui/PharmSignUp";
+import { useAuth } from "../context/authContext";
+import { useNavigate } from "react-router-dom";
 
 type SignupProps = {
   role: "patient" | "pharmacy";
@@ -13,6 +15,15 @@ const RoleSelection = () => {
   const [selectedRole, setSelectedRole] = useState<
     "patient" | "pharmacy" | null
   >(null);
+
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/homepage");
+    }
+  }, [isAuthenticated, navigate]);
 
   const roles = [
     {

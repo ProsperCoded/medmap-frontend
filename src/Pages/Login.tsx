@@ -2,8 +2,19 @@ import { motion } from "framer-motion";
 import Logo from "../Components/Logo";
 import FullWidthTabs from "../Ui/tabsAuth";
 import Person from "../assets/pha.jpg";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/authContext";
+import { useEffect } from "react";
 
 const Login = () => {
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/homepage");
+    }
+  }, [isAuthenticated, navigate]);
   return (
     <div className="h-screen grid md:grid-cols-2 grid-cols-1 bg-gray-50">
       <div className="h-[100vh] hidden md:block">
