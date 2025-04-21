@@ -94,9 +94,12 @@ const Navbar = () => {
           >
             Login
           </Link>
-          <button className="px-5  py-2 text-sm font-medium text-white bg-[#22c3dd] rounded-xl hover:bg-[#323432] transition duration-300 ease-in-out cursor-pointer">
+          <Link
+            to={"/auth/signup"}
+            className="px-5  py-2 text-sm font-medium text-white bg-[#22c3dd] rounded-xl hover:bg-[#323432] transition duration-300 ease-in-out cursor-pointer"
+          >
             Signup
-          </button>
+          </Link>
         </div>
       </div>
     </div>
