@@ -1,5 +1,6 @@
-import React from "react";
+import { Locate } from "lucide-react";
 import Logo from "../Logo";
+import { IconButton, Tooltip } from "@mui/material";
 
 const Nav = () => {
   return (
@@ -8,6 +9,17 @@ const Nav = () => {
         <div className="flex justify-between items-center px-5 py-2">
           <Logo />
           <div className="flex items-center">
+            <div
+              aria-label="Locate Nearby"
+              className="bg-[#22c3dd] rounded-md text-white hover:bg-[#38d3ea] transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#22c3dd] mr-3"
+            >
+              <Tooltip title="Explore">
+                <IconButton>
+                  <Locate size={16} />
+                </IconButton>
+              </Tooltip>
+            </div>
+
             <div className="w-6">
               <svg
                 viewBox="0 0 512 512"

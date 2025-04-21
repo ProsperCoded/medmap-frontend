@@ -1,11 +1,33 @@
-import { useState } from "react";
+import { use, useEffect, useState } from "react";
 import Nav from "../../Components/user/Nav";
 import Card from "../../Components/user/Card";
+import { useParams } from "react-router-dom";
+import { getMed } from "../../api/Client/search.api";
 
 const SearchPage = () => {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [radius, setRadius] = useState(4);
   const [view, setView] = useState("list");
+
+  const value = useParams().value;
+  const [searchValue, setSearchValue] = useState(value);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getMed({ name: searchValue });
+        if (response?.status === "success") {
+          console.log("Fetched data:", response.data);
+        } else {
+          console.error("Error fetching data:", response?.message);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, [value]);
 
   return (
     <div className="min-h-screen text-white">
@@ -39,6 +61,8 @@ const SearchPage = () => {
             <input
               type="text"
               placeholder="Search for medication..."
+              onChange={(e) => setSearchValue(e.target.value)}
+              value={searchValue}
               className="w-full pl-10 pr-4 py-2 text-zinc-900 placeholder-zinc-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#22c3dd] border border-zinc-700 transition"
             />
             <svg
@@ -182,7 +206,7 @@ const SearchPage = () => {
                 </div>
               </div>
               <div className="rounded-xl border border-gray-700 p-5">
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid md:grid-cols-3 grid-cols-1 gap-3">
                   <Card />
                   <Card />
                   <Card />
