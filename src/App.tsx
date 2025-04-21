@@ -7,16 +7,18 @@ import Signup from "./Pages/signup";
 import { AuthProvider } from "./context/authContext";
 import ProtectedRoute from "./Components/auth/protectedRoute";
 import HomePage from "./Pages/users/usersHomePage";
-import SearchPage from "./Pages/users/searchPage";
+// import SearchPage from "./Pages/users/searchPage";
 import PharmacyAssistant from "./Components/Bot/chatBot";
+import SearchPage from "./Pages/users/SearchPage";
+import Explore from "./Pages/users/Explore";
+import Directions from "./Pages/users/directions";
 
 function App() {
   return (
     <div className="home">
       <AuthProvider>
-        
         <BrowserRouter>
-        <PharmacyAssistant />
+          <PharmacyAssistant />
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/auth/login" element={<Login />} />
@@ -30,10 +32,26 @@ function App() {
               }
             />
             <Route
-              path="/search_result"
+              path="/search_result/:value"
               element={
                 <ProtectedRoute>
                   <SearchPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/explore"
+              element={
+                <ProtectedRoute>
+                  <Explore />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/directions/:id/:current_lat/:current_lng/:pharmacy_lat/:pharmacy_lng"
+              element={
+                <ProtectedRoute>
+                  <Directions />
                 </ProtectedRoute>
               }
             />

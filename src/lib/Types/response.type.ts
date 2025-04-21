@@ -79,3 +79,51 @@ export interface PharmacyProfile {
     };
   };
 }
+
+export interface Drug {
+  id: string;
+  name: string;
+  description: string;
+  sideEffects: string[];
+  pharmacyId: string;
+  expiryDate: string;
+  imageUrl: string;
+  price: number;
+  stocks: number;
+  pharmacy: {
+    id: string;
+    name: string;
+    email: string;
+    description: string;
+    logoUrl: string;
+    shopImageUrl: string;
+    createdAt: string;
+    updatedAt: string;
+    contactInfo: {
+      id: string;
+      address: string;
+      phone: string;
+      state: string;
+      country: string;
+      longitude: number;
+      latitude: number;
+      pharmacyId: string;
+    };
+  };
+  illnessDrugs: {
+    illness: string;
+  }[];
+}
+
+export interface DrugResponse {
+  message: string;
+  data: {
+    data: Drug[];
+    pagination: {
+      total: number;
+      page: number;
+      limit: number;
+      totalPages: number;
+    };
+  };
+}

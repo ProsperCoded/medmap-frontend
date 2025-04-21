@@ -1,18 +1,46 @@
 import { Clock, X } from "lucide-react";
-import Logo from "../../Components/Logo";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import HowItWorks from "../../Ui/howItWorks";
 import ForUsers from "../../Ui/forUsers";
 import Footer from "../../Ui/Footer";
 import Nav from "../../Components/user/Nav";
+import { useNavigate } from "react-router-dom";
 
 const HomePage = () => {
-  const [recents, setRecents] = useState([
-    "Paracetamol",
-    "Ibuprofen",
-    "Amoxicillin",
-  ]);
+  const [recents, setRecents] = useState<string[]>([]);
   const [searchValue, setSearchValue] = useState("");
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    try {
+      const storedRecents = localStorage.getItem("recentSearches");
+      if (storedRecents) {
+        const parsed = JSON.parse(storedRecents);
+        if (Array.isArray(parsed)) {
+          setRecents(parsed);
+          console.log("Loaded recent searches from localStorage", parsed);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to parse recentSearches:", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("recentSearches", JSON.stringify(recents));
+  }, [recents]);
+
+  const handleSearch = () => {
+    const trimmedValue = searchValue.trim();
+    if (trimmedValue && !recents.includes(trimmedValue)) {
+      setRecents((prev) => [trimmedValue, ...prev].slice(0, 5));
+    }
+
+    // Redirect to the search results page with the search value
+    navigate(`/search_result/${encodeURIComponent(trimmedValue)}`);
+    setSearchValue("");
+  };
 
   const removeItem = (item: string) => {
     setRecents((prev) => prev.filter((r) => r !== item));
@@ -64,12 +92,13 @@ const HomePage = () => {
             <button
               type="submit"
               className="px-5 py-3 bg-[#22c3dd] text-white rounded-full hover:bg-[#1ca7ba] transition"
-              onClick={() => console.log("Searching for:", searchValue)}
+              onClick={handleSearch}
             >
               Search
             </button>
           </div>
         </div>
+
         {recents.length > 0 && (
           <div className="mb-6 w-full max-w-xl mx-auto">
             <h2 className="flex items-center mt-3 mb-1 gap-2">
@@ -86,7 +115,7 @@ const HomePage = () => {
                   <span>{item}</span>
                   <button
                     onClick={(e) => {
-                      e.stopPropagation(); // prevent parent click
+                      e.stopPropagation();
                       removeItem(item);
                     }}
                     className="hover:text-red-500"
@@ -102,7 +131,6 @@ const HomePage = () => {
         <HowItWorks />
         <ForUsers />
       </div>
-
       <Footer />
     </div>
   );
