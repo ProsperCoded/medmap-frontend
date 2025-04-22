@@ -26,6 +26,7 @@ function App() {
             <Route path="/" element={<Landing />} />
             <Route path="/auth/login" element={<Login />} />
             <Route path="/auth/signup" element={<Signup />} />
+            <Route path="/search" element={<SearchPage />} />
 
             {/* Protected Routes */}
             <Route
@@ -33,15 +34,6 @@ function App() {
               element={
                 <ProtectedRoute>
                   <HomePage />
-                </ProtectedRoute>
-              }
-            />
-
-            <Route
-              path="/search_result/:value"
-              element={
-                <ProtectedRoute>
-                  <SearchPage />
                 </ProtectedRoute>
               }
             />

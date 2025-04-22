@@ -1,15 +1,17 @@
 import { useEffect, useState } from "react";
 import Navbar from "../../Ui/Navbar";
 import Card from "../../Components/user/Card";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { getMed } from "../../api/Client/search.api";
 import MapSearch from "../../Components/user/Map_Search";
 import { Drug } from "../../lib/Types/response.type"; // Update this import path if needed
 
 const SearchPage = () => {
   const [view, setView] = useState<"list" | "map">("list");
-  const value = useParams().value;
-  const [searchValue, setSearchValue] = useState(value || "");
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const queryValue = queryParams.get("query") || "";
+  const [searchValue, setSearchValue] = useState(queryValue);
   const [results, setResults] = useState<Drug[]>([]);
   const [userLocation, setUserLocation] = useState<{
     lat: number;
@@ -34,6 +36,11 @@ const SearchPage = () => {
       console.error("Geolocation is not supported by this browser.");
     }
   }, []);
+
+  useEffect(() => {
+    // Update searchValue when URL query parameter changes
+    setSearchValue(queryValue);
+  }, [queryValue]);
 
   useEffect(() => {
     if (searchValue) {
@@ -61,7 +68,13 @@ const SearchPage = () => {
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    fetchData(searchValue);
+    if (searchValue.trim()) {
+      // Update URL with new query parameter
+      navigate(`/search?query=${encodeURIComponent(searchValue)}`, {
+        replace: true,
+      });
+      fetchData(searchValue);
+    }
   };
 
   const handleDirections = (pharmacy: {
