@@ -7,22 +7,27 @@ import Signup from "./Pages/signup";
 import { AuthProvider } from "./context/authContext";
 import ProtectedRoute from "./Components/auth/protectedRoute";
 import HomePage from "./Pages/users/usersHomePage";
-// import SearchPage from "./Pages/users/searchPage";
-import PharmacyAssistant from "./Components/Bot/chatBot";
 import SearchPage from "./Pages/users/SearchPage";
+import PharmacyAssistant from "./Components/Bot/chatBot";
 import Explore from "./Pages/users/Explore";
 import Directions from "./Pages/users/directions";
+import NotFound from "./Pages/NotFound";
 
 function App() {
   return (
     <div className="home">
       <AuthProvider>
         <BrowserRouter>
+          {/* Chat bot is available on all pages */}
           <PharmacyAssistant />
+
           <Routes>
+            {/* Public Routes */}
             <Route path="/" element={<Landing />} />
             <Route path="/auth/login" element={<Login />} />
             <Route path="/auth/signup" element={<Signup />} />
+
+            {/* Protected Routes */}
             <Route
               path="/homepage"
               element={
@@ -31,6 +36,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
+
             <Route
               path="/search_result/:value"
               element={
@@ -39,6 +45,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
+
             <Route
               path="/explore"
               element={
@@ -47,6 +54,7 @@ function App() {
                 </ProtectedRoute>
               }
             />
+
             <Route
               path="/directions/:id/:current_lat/:current_lng/:pharmacy_lat/:pharmacy_lng"
               element={
@@ -55,7 +63,11 @@ function App() {
                 </ProtectedRoute>
               }
             />
+
+            {/* 404 - This must be the last route */}
+            <Route path="*" element={<NotFound />} />
           </Routes>
+
           <Toaster position="top-right" reverseOrder={false} />
         </BrowserRouter>
       </AuthProvider>

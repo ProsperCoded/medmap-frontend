@@ -97,7 +97,7 @@ const PharmacySignUpForm = () => {
           setUser(response.data);
           setIsAuthenticated(true);
           storeSession(response.data.token);
-          navigate("/homepage");
+          navigate("/");
         }
       } catch (err) {
         console.log(err);
@@ -107,41 +107,41 @@ const PharmacySignUpForm = () => {
 
   return (
     <motion.div
-      className="signup-container font-sans text-center p-8 bg-white shadow-2xl rounded-2xl w-full max-w-md mx-auto my-10"
+      className="bg-white shadow-2xl mx-auto my-10 p-8 signup-container rounded-2xl w-full max-w-md font-sans text-center"
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
     >
       <Logo />
-      <h2 className="text-3xl font-bold text-gray-800 mt-4">Create Account</h2>
-      <p className="text-gray-600 mt-1">
+      <h2 className="mt-4 font-bold text-gray-800 text-3xl">Create Account</h2>
+      <p className="mt-1 text-gray-600">
         Sign up as a{" "}
         <Link
           to={"/auth/login"}
-          className="font-bold capitalize text-[#22c3dd]"
+          className="font-bold text-[#22c3dd] capitalize"
         >
           patient
         </Link>
       </p>
 
       {/* Progress Bar */}
-      <div className="w-full mt-6 mb-4">
-        <div className="h-2 bg-gray-200 rounded-full">
+      <div className="mt-6 mb-4 w-full">
+        <div className="bg-gray-200 rounded-full h-2">
           <motion.div
-            className="h-2 bg-[#22c3dd] rounded-full"
+            className="bg-[#22c3dd] rounded-full h-2"
             initial={{ width: 0 }}
             animate={{ width: `${(step / 3) * 100}%` }}
             transition={{ duration: 0.4 }}
           />
         </div>
-        <div className="flex justify-between text-xs text-gray-600 mt-1">
+        <div className="flex justify-between mt-1 text-gray-600 text-xs">
           <span>Step 1</span>
           <span>Step 2</span>
           <span>Step 3</span>
         </div>
       </div>
 
-      <form className="mt-4 space-y-5 text-left">
+      <form className="space-y-5 mt-4 text-left">
         <motion.div
           key={step}
           initial={{ opacity: 0, x: 50 }}
@@ -235,7 +235,7 @@ const PharmacySignUpForm = () => {
             <button
               type="button"
               onClick={handleBack}
-              className="flex-1 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition"
+              className="flex-1 hover:bg-gray-100 py-2 border border-gray-300 rounded-lg text-gray-700 transition"
             >
               Back
             </button>
@@ -244,7 +244,7 @@ const PharmacySignUpForm = () => {
             <button
               type="button"
               onClick={handleNext}
-              className="flex-1 py-2 bg-[#22c3dd] text-white rounded-lg hover:bg-[#1baac5] transition"
+              className="flex-1 bg-[#22c3dd] hover:bg-[#1baac5] py-2 rounded-lg text-white transition"
             >
               Next
             </button>
@@ -255,7 +255,7 @@ const PharmacySignUpForm = () => {
               type="submit"
               onClick={handleSubmit}
               disabled={isLoading}
-              className="flex-1 py-2 bg-[#22c3dd] text-white rounded-lg hover:bg-[#1baac5] transition"
+              className="flex-1 bg-[#22c3dd] hover:bg-[#1baac5] py-2 rounded-lg text-white transition"
             >
               {isLoading ? "Sumbitting..." : "Sign up"}
             </button>
@@ -286,7 +286,7 @@ const InputField = ({
   <div>
     <label
       htmlFor={id}
-      className="block mb-1 text-sm font-medium text-gray-700"
+      className="block mb-1 font-medium text-gray-700 text-sm"
     >
       {label}
     </label>
@@ -300,7 +300,7 @@ const InputField = ({
         error ? "border-red-500" : "border-gray-300"
       } rounded-lg focus:outline-none focus:ring-2 focus:ring-[#22c3dd] transition`}
     />
-    {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
+    {error && <p className="mt-1 text-red-500 text-sm">{error}</p>}
   </div>
 );
 

@@ -51,7 +51,7 @@ const PatientSignUpForm = () => {
 
   return (
     <motion.div
-      className="signup-container relative text-center rounded-2xl w-full max-w-md mx-auto "
+      className="relative mx-auto signup-container rounded-2xl w-full max-w-md text-center"
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
@@ -60,17 +60,17 @@ const PatientSignUpForm = () => {
         <Logo />
       </div>
 
-      <h2 className="text-3xl font-bold text-gray-800 mt-4">Create Account</h2>
-      <p className="text-gray-600 mt-1">
+      <h2 className="mt-4 font-bold text-gray-800 text-3xl">Create Account</h2>
+      <p className="mt-1 text-gray-600">
         Sign up as a{" "}
-        <span className="font-bold capitalize text-[#22c3dd]">patient</span>
+        <span className="font-bold text-[#22c3dd] capitalize">patient</span>
       </p>
 
-      <form className="mt-6 space-y-5 text-left" onSubmit={handleSubmit}>
+      <form className="space-y-5 mt-6 text-left" onSubmit={handleSubmit}>
         <div>
           <label
             htmlFor="firstname"
-            className="block mb-1 text-sm font-medium text-gray-700"
+            className="block mb-1 font-medium text-gray-700 text-sm"
           >
             First Name
           </label>
@@ -80,14 +80,14 @@ const PatientSignUpForm = () => {
             placeholder="John"
             value={formData.firstname}
             onChange={handleChange}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#22c3dd] transition"
+            className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#22c3dd] w-full transition"
           />
         </div>
 
         <div>
           <label
             htmlFor="lastname"
-            className="block mb-1 text-sm font-medium text-gray-700"
+            className="block mb-1 font-medium text-gray-700 text-sm"
           >
             Last Name
           </label>
@@ -97,14 +97,14 @@ const PatientSignUpForm = () => {
             placeholder="Doe"
             value={formData.lastname}
             onChange={handleChange}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#22c3dd] transition"
+            className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#22c3dd] w-full transition"
           />
         </div>
 
         <div>
           <label
             htmlFor="email"
-            className="block mb-1 text-sm font-medium text-gray-700"
+            className="block mb-1 font-medium text-gray-700 text-sm"
           >
             Email
           </label>
@@ -114,14 +114,14 @@ const PatientSignUpForm = () => {
             placeholder="you@example.com"
             value={formData.email}
             onChange={handleChange}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#22c3dd] transition"
+            className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#22c3dd] w-full transition"
           />
         </div>
 
         <div>
           <label
             htmlFor="password"
-            className="block mb-1 text-sm font-medium text-gray-700"
+            className="block mb-1 font-medium text-gray-700 text-sm"
           >
             Password
           </label>
@@ -131,14 +131,14 @@ const PatientSignUpForm = () => {
             placeholder="••••••••"
             value={formData.password}
             onChange={handleChange}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#22c3dd] transition"
+            className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#22c3dd] w-full transition"
           />
         </div>
 
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full py-3 bg-[#22c3dd] text-white font-semibold rounded-lg hover:bg-[#1baac5] transition duration-300"
+          className="bg-[#22c3dd] hover:bg-[#1baac5] py-3 rounded-lg w-full font-semibold text-white transition duration-300"
         >
           {isLoading ? "Sumbitting..." : "Sign up"}
         </button>

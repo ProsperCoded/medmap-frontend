@@ -41,20 +41,20 @@ const RoleSelection = () => {
   return (
     <div className="">
       {!selectedRole ? (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+        <div className="flex justify-center items-center bg-gray-100 px-4 min-h-screen">
           <motion.div
-            className="bg-white p-10 rounded-xl shadow-2xl w-full max-w-3xl text-center"
+            className="bg-white shadow-2xl p-10 rounded-xl w-full max-w-3xl text-center"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
           >
             <Logo />
-            <h2 className="text-2xl font-bold text-gray-800 mb-1">
+            <h2 className="mb-1 font-bold text-gray-800 text-2xl">
               SELECT USER TYPE
             </h2>
-            <div className="h-1 w-10 bg-[#22c3dd] mx-auto rounded-full mb-6" />
+            <div className="bg-[#22c3dd] mx-auto mb-6 rounded-full w-10 h-1" />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+            <div className="gap-6 grid grid-cols-1 md:grid-cols-2 mb-10">
               {roles.map((role) => (
                 <button
                   key={role.id}
@@ -73,7 +73,7 @@ const RoleSelection = () => {
               ))}
             </div>
 
-            <div className="text-sm text-gray-500">
+            <div className="text-gray-500 text-sm">
               Click a user type to continue
             </div>
           </motion.div>
@@ -87,13 +87,13 @@ const RoleSelection = () => {
 
 const Signup = ({ role }: SignupProps) => {
   return (
-    <div className="h-screen grid md:grid-cols-2 grid-cols-1">
+    <div className="grid grid-cols-1 md:grid-cols-2 h-screen">
       <div className="hidden md:block">
-        <div className="sticky top-0 h-screen">
-          <img src={Person} className="h-full w-full object-cover" alt="" />
+        <div className="top-0 sticky h-screen">
+          <img src={Person} className="w-full h-full object-cover" alt="" />
         </div>
       </div>
-      <div className="md:p-1 p-8">
+      <div className="p-8 md:p-1">
         {role === "patient" ? <PatientSignUpForm /> : <PharmacySignUpForm />}
       </div>
     </div>

@@ -16,12 +16,12 @@ const Login = () => {
     }
   }, [isAuthenticated, navigate]);
   return (
-    <div className="h-screen grid md:grid-cols-2 grid-cols-1 bg-gray-50">
-      <div className="h-[100vh] hidden md:block">
-        <img src={Person} className="h-[100vh] w-full object-cover" alt="" />
+    <div className="grid grid-cols-1 md:grid-cols-2 bg-gray-50 h-screen">
+      <div className="hidden md:block h-[100vh]">
+        <img src={Person} className="w-full h-[100vh] object-cover" alt="" />
       </div>
       <motion.div
-        className="login-container p-4 text-center w-full bg-white shadow-lg rounded-xl flex items-center justify-center"
+        className="flex justify-center items-center bg-white shadow-lg p-4 rounded-xl w-full text-center login-container"
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
@@ -31,11 +31,11 @@ const Login = () => {
 
           <h2
             style={{ letterSpacing: "4px" }}
-            className="text-3xl mt-3 heading text-gray-800 font-semibold"
+            className="mt-3 font-semibold text-gray-800 text-3xl heading"
           >
             Welcome Back
           </h2>
-          <p className="text-gray-600 mt-1">Sign in to your account</p>
+          <p className="mt-1 text-gray-600">Sign in to your account</p>
 
           <div className="mt-5">
             <FullWidthTabs />

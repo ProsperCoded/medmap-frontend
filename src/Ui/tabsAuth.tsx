@@ -74,7 +74,7 @@ const ClientLoginForm = () => {
 
   return (
     <div>
-      <form className="mt-6 text-left space-y-4" onSubmit={handleSubmit}>
+      <form className="space-y-4 mt-6 text-left" onSubmit={handleSubmit}>
         <div>
           <label htmlFor="email" className="block mb-1 text-gray-700">
             Email
@@ -86,7 +86,7 @@ const ClientLoginForm = () => {
             placeholder="you@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#22c3dd]"
+            className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#22c3dd] w-full"
           />
         </div>
 
@@ -101,7 +101,7 @@ const ClientLoginForm = () => {
             placeholder="Enter your password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#22c3dd]"
+            className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#22c3dd] w-full"
           />
         </div>
 
@@ -110,7 +110,7 @@ const ClientLoginForm = () => {
           whileTap={{ scale: 0.98 }}
           type="submit"
           disabled={isLoading}
-          className="w-full p-3 bg-[#22c3dd] text-white rounded-lg font-semibold hover:bg-[#1bb2cc] transition-all"
+          className="bg-[#22c3dd] hover:bg-[#1bb2cc] p-3 rounded-lg w-full font-semibold text-white transition-all"
         >
           {isLoading ? "Submitting..." : "Sign in"}
         </motion.button>
@@ -136,7 +136,7 @@ const PharmacyLoginForm = () => {
 
   return (
     <div>
-      <form className="mt-6 text-left space-y-4" onSubmit={handleSubmit}>
+      <form className="space-y-4 mt-6 text-left" onSubmit={handleSubmit}>
         <div>
           <label htmlFor="email" className="block mb-1 text-gray-700">
             Business Email
@@ -148,7 +148,7 @@ const PharmacyLoginForm = () => {
             placeholder="you@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#22c3dd]"
+            className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#22c3dd] w-full"
           />
         </div>
 
@@ -163,7 +163,7 @@ const PharmacyLoginForm = () => {
             placeholder="Enter your password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#22c3dd]"
+            className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#22c3dd] w-full"
           />
         </div>
 
@@ -171,7 +171,7 @@ const PharmacyLoginForm = () => {
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.98 }}
           type="submit"
-          className="w-full p-3 bg-[#22c3dd] text-white rounded-lg font-semibold hover:bg-[#1bb2cc] transition-all"
+          className="bg-[#22c3dd] hover:bg-[#1bb2cc] p-3 rounded-lg w-full font-semibold text-white transition-all"
         >
           Sign in
         </motion.button>
