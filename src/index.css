@@ -43,3 +43,7 @@ body {
 .text_dark_mid {
   color: var(--mid);
 }
+.bot-message a {
+  color: #22c3dd;
+  text-decoration: underline;
+}
