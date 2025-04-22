@@ -113,14 +113,16 @@ const PharmacySignUpForm = () => {
       transition={{ duration: 0.6 }}
     >
       <Logo />
-      <h2 className="mt-4 font-bold text-gray-800 text-3xl">Create Account</h2>
+      <h2 className="mt-4 font-bold text-gray-800 text-3xl">
+        Create Pharmacy Account
+      </h2>
       <p className="mt-1 text-gray-600">
         Sign up as a{" "}
         <Link
           to={"/auth/login"}
           className="font-bold text-[#22c3dd] capitalize"
         >
-          patient
+          User
         </Link>
       </p>
 

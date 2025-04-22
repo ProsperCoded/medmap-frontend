@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/authContext";
 import { storeSession } from "../lib/utils";
 
-const PatientSignUpForm = () => {
+const UserSignUpForm = () => {
   const [formData, setFormData] = useState({
     firstname: "",
     lastname: "",
@@ -63,7 +63,7 @@ const PatientSignUpForm = () => {
       <h2 className="mt-4 font-bold text-gray-800 text-3xl">Create Account</h2>
       <p className="mt-1 text-gray-600">
         Sign up as a{" "}
-        <span className="font-bold text-[#22c3dd] capitalize">patient</span>
+        <span className="font-bold text-[#22c3dd] capitalize">user</span>
       </p>
 
       <form className="space-y-5 mt-6 text-left" onSubmit={handleSubmit}>
@@ -147,4 +147,4 @@ const PatientSignUpForm = () => {
   );
 };
 
-export default PatientSignUpForm;
+export default UserSignUpForm;

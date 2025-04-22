@@ -4,15 +4,15 @@ const Footer: React.FC = () => {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="text-gray-700 py-8  border-t border-gray-200">
-      <div className="max-w-6xl mx-auto px-6 text-center space-y-2">
-        <p className="text-sm font-medium">
+    <footer className="py-8 border-gray-200 border-t text-gray-700">
+      <div className="space-y-2 mx-auto px-6 max-w-6xl text-center">
+        <p className="font-medium text-sm">
           &copy; {year} Med
-          <span className="heading text-[#22c3dd]">Map</span>. All
-          rights reserved.
+          <span className="text-[#22c3dd] heading">Map</span>. All rights
+          reserved.
         </p>
         <p className="text-sm">
-          Helping connect patients with the medications they need.
+          Helping connect users with the medications they need.
         </p>
       </div>
     </footer>

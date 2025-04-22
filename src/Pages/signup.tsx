@@ -1,20 +1,20 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Logo from "../Components/Logo";
-import PatientSignUpForm from "../Ui/patientSignUpForm";
+import UserSignUpForm from "../Ui/UserSignUpForm";
 import Person from "../assets/ph.jpg";
 import PharmacySignUpForm from "../Ui/PharmSignUp";
 import { useAuth } from "../context/authContext";
 import { useNavigate } from "react-router-dom";
 
 type SignupProps = {
-  role: "patient" | "pharmacy";
+  role: "user" | "pharmacy";
 };
 
 const RoleSelection = () => {
-  const [selectedRole, setSelectedRole] = useState<
-    "patient" | "pharmacy" | null
-  >(null);
+  const [selectedRole, setSelectedRole] = useState<"user" | "pharmacy" | null>(
+    null
+  );
 
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
@@ -27,9 +27,9 @@ const RoleSelection = () => {
 
   const roles = [
     {
-      id: "patient",
+      id: "user",
       icon: <span className="text-3xl">👤</span>,
-      label: "Patient",
+      label: "user",
     },
     {
       id: "pharmacy",
@@ -59,7 +59,7 @@ const RoleSelection = () => {
                 <button
                   key={role.id}
                   onClick={() =>
-                    setSelectedRole(role.id as "patient" | "pharmacy")
+                    setSelectedRole(role.id as "user" | "pharmacy")
                   }
                   className={`flex flex-col items-center justify-center p-6 rounded-xl border-2 transition-all duration-300 ${
                     selectedRole === role.id
@@ -94,7 +94,7 @@ const Signup = ({ role }: SignupProps) => {
         </div>
       </div>
       <div className="p-8 md:p-1">
-        {role === "patient" ? <PatientSignUpForm /> : <PharmacySignUpForm />}
+        {role === "user" ? <UserSignUpForm /> : <PharmacySignUpForm />}
       </div>
     </div>
   );
