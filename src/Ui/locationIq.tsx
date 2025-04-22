@@ -117,6 +117,8 @@ const LocationIQGeocoder = ({ onLocationChange }: Props) => {
   }, [location]);
 
   const handleLocationUpdate = (newLocation: LocationDetails) => {
+    newLocation.lat = Number(newLocation.lat);
+    newLocation.lon = Number(newLocation.lon);
     setLocation(newLocation);
     onLocationChange((prevData) => ({
       ...prevData,
