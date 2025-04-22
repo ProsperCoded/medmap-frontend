@@ -1,12 +1,12 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import { Toaster } from "react-hot-toast";
-import Landing from "./Pages/Landing";
+import Landing from "./Pages/LandingPage";
 import Login from "./Pages/Login";
 import Signup from "./Pages/signup";
 import { AuthProvider } from "./context/authContext";
 import ProtectedRoute from "./Components/auth/protectedRoute";
-import HomePage from "./Pages/users/usersHomePage";
+import HomePage from "./Pages/users/HomePage";
 import SearchPage from "./Pages/users/SearchPage";
 import PharmacyAssistant from "./Components/Bot/chatBot";
 import Explore from "./Pages/users/Explore";

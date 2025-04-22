@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import Nav from "../../Components/user/Nav";
+import Navbar from "../../Ui/Navbar";
 import { pharmacies } from "../../lib/data";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -91,7 +91,7 @@ const Directions = () => {
 
   return (
     <div className="min-h-screen text-white">
-      <Nav />
+      <Navbar />
       <div className="px-4 py-6">
         <div className="flex items-center gap-3">
           <button
@@ -112,13 +112,13 @@ const Directions = () => {
                 d="M15 19l-7-7 7-7"
               />
             </svg>
-            <span className="text-sm font-medium">Back</span>
+            <span className="font-medium text-sm">Back</span>
           </button>
         </div>
       </div>
 
       <motion.div
-        className="border-gray-900 border md:w-11/12 p-6  mx-auto rounded-lg text-gray-900"
+        className="mx-auto p-6 border border-gray-900 rounded-lg md:w-11/12 text-gray-900"
         initial={{ opacity: 0 }} // Initial state (start invisible)
         animate={{ opacity: 1 }} // Animate to visible
         transition={{ duration: 0.5 }} // Transition duration
@@ -130,33 +130,33 @@ const Directions = () => {
           <p className="text-gray-500 text-sm">{pharmacy?.address}</p>
         </div>
 
-        <div className="grid grid-cols-12 md:gap-10 gap-5">
-          <div className="md:col-span-4 col-span-12">
+        <div className="gap-5 md:gap-10 grid grid-cols-12">
+          <div className="col-span-12 md:col-span-4">
             <motion.div
-              className="max-w-sm mx-auto sticky top-20 p-4 border border-gray-900 rounded-lg"
+              className="top-20 sticky mx-auto p-4 border border-gray-900 rounded-lg max-w-sm"
               initial={{ x: -100, opacity: 0 }} // Start off-screen with opacity 0
               animate={{ x: 0, opacity: 1 }} // Animate to on-screen with opacity 1
               transition={{ duration: 0.7 }} // Transition duration
             >
               <div className="flex justify-between mb-4">
                 <div>
-                  <p className="text-sm text-gray-900">Estimated Time</p>
-                  <p className="text-lg font-bold text-black">
+                  <p className="text-gray-900 text-sm">Estimated Time</p>
+                  <p className="font-bold text-black text-lg">
                     {duration !== null ? `${duration.toFixed(1)} mins` : "—"}
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-gray-900">Total Distance</p>
-                  <p className="text-lg font-bold text-black">
+                  <p className="text-gray-900 text-sm">Total Distance</p>
+                  <p className="font-bold text-black text-lg">
                     {distance !== null ? `${distance.toFixed(2)} km` : "—"}
                   </p>
                 </div>
               </div>
 
-              <div className="flex gap-2 mb-4 flex-wrap md:justify-normal justify-end">
+              <div className="flex flex-wrap justify-end md:justify-normal gap-2 mb-4">
                 <button
                   onClick={handleDirections}
-                  className="px-4 py-2 text-[#22c3dd] border border-[#22c3dd] rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-[#22c3dd] focus:ring-offset-2 hover:bg-[#22c3dd] hover:text-white transition duration-200"
+                  className="hover:bg-[#22c3dd] px-4 py-2 border border-[#22c3dd] rounded-full focus:outline-none focus:ring-2 focus:ring-[#22c3dd] focus:ring-offset-2 text-[#22c3dd] hover:text-white text-sm transition duration-200"
                 >
                   Navigate
                 </button>
@@ -164,15 +164,15 @@ const Directions = () => {
 
               {directions.length > 0 ? (
                 <motion.div
-                  className="border-t border-[#22c3dd] pt-4"
+                  className="pt-4 border-[#22c3dd] border-t"
                   initial={{ opacity: 0 }} // Start invisible
                   animate={{ opacity: 1 }} // Animate to visible
                   transition={{ duration: 0.5 }} // Transition duration
                 >
-                  <h2 className="font-semibold mb-3 text-[#22c3dd]">
+                  <h2 className="mb-3 font-semibold text-[#22c3dd]">
                     Step by Step Directions
                   </h2>
-                  <ol className="space-y-3 text-sm text-gray-800">
+                  <ol className="space-y-3 text-gray-800 text-sm">
                     {directions.map((item, index) => (
                       <motion.li
                         key={index}
@@ -181,7 +181,7 @@ const Directions = () => {
                         animate={{ opacity: 1 }}
                         transition={{ duration: 0.3 }}
                       >
-                        <div className="text-[#22c3dd] font-semibold min-w-[20px]">
+                        <div className="min-w-[20px] font-semibold text-[#22c3dd]">
                           {index + 1}
                         </div>
                         <div>
@@ -193,12 +193,12 @@ const Directions = () => {
                               : " " + item.maneuver.modifier}
                           </p>
 
-                          <p className="text-xs text-gray-500">
+                          <p className="text-gray-500 text-xs">
                             {(item.distance / 1000).toFixed(2)} km • Duration:{" "}
                             {Math.ceil(item.duration / 60)} mins
                           </p>
                           {item.intersections && (
-                            <div className="text-xs text-gray-500">
+                            <div className="text-gray-500 text-xs">
                               <h4>Intersections:</h4>
                             </div>
                           )}
@@ -207,8 +207,8 @@ const Directions = () => {
                     ))}
                   </ol>
                   <div className="mt-5">
-                    <h2 className="text-lg text-[#22c3dd]">Waypoints:</h2>
-                    <ul className="list-disc pl-6">
+                    <h2 className="text-[#22c3dd] text-lg">Waypoints:</h2>
+                    <ul className="pl-6 list-disc">
                       {waypoints.map((waypoint, index) => (
                         <li key={index} className="text-gray-900">
                           <strong>{waypoint.name}</strong>:{" "}
@@ -219,15 +219,15 @@ const Directions = () => {
                   </div>
                 </motion.div>
               ) : (
-                <p className="text-sm text-gray-500 mt-4 italic">
+                <p className="mt-4 text-gray-500 text-sm italic">
                   Click “Navigate” to fetch step-by-step directions.
                 </p>
               )}
             </motion.div>
           </div>
 
-          <div className="md:col-span-8 col-span-12">
-            <div className="md:p-0 p-4 sticky top-20 bg-white rounded-lg border border-gray-900">
+          <div className="col-span-12 md:col-span-8">
+            <div className="top-20 sticky bg-white p-4 md:p-0 border border-gray-900 rounded-lg">
               <Map_direction
                 userlat={currentLat}
                 userlng={currentLng}

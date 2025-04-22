@@ -1,5 +1,5 @@
 import { Locate } from "lucide-react";
-import Nav from "../../Components/user/Nav";
+import Navbar from "../../Ui/Navbar";
 import { useState, useEffect } from "react";
 import Map from "../../Components/user/Map";
 import CardList from "../../Components/user/card_list";
@@ -54,9 +54,9 @@ const Explore = () => {
 
   return (
     <div>
-      <Nav />
+      <Navbar />
       <button
-        className="flex items-center gap-1 text-black hover:text-[#22c3dd] transition duration-200 mt-4 ml-4"
+        className="flex items-center gap-1 mt-4 ml-4 text-black hover:text-[#22c3dd] transition duration-200"
         onClick={() => window.history.back()}
       >
         <svg
@@ -73,13 +73,13 @@ const Explore = () => {
             d="M15 19l-7-7 7-7"
           />
         </svg>
-        <span className="text-sm font-medium">Back</span>
+        <span className="font-medium text-sm">Back</span>
       </button>
 
-      <div className="md:w-10/12  mx-auto py-8">
+      <div className="mx-auto py-8 md:w-10/12">
         <div className="flex justify-between items-center">
-          <h1 className="md:text-3xl text-xl flex gap-2 items-center mt-8">
-            <div className="rounded-md border border-gray-700 p-1">
+          <h1 className="flex items-center gap-2 mt-8 text-xl md:text-3xl">
+            <div className="p-1 border border-gray-700 rounded-md">
               <Locate color="#22c3dd" size={15} />
             </div>
             <span>
@@ -88,7 +88,7 @@ const Explore = () => {
           </h1>
 
           <div>
-            <div className="inline-flex items-center border border-gray-700 rounded-full p-1 text-sm font-medium">
+            <div className="inline-flex items-center p-1 border border-gray-700 rounded-full font-medium text-sm">
               {/* List View Button */}
               <button
                 onClick={() => setView("list")}
@@ -100,7 +100,7 @@ const Explore = () => {
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4"
+                  className="w-4 h-4"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -126,7 +126,7 @@ const Explore = () => {
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-4 w-4"
+                  className="w-4 h-4"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -144,9 +144,9 @@ const Explore = () => {
           </div>
         </div>
 
-        <div className="rounded-xl mt-5 m-3 border border-gray-700 p-5 mt-4 bg-white shadow-md">
+        <div className="bg-white shadow-md m-3 mt-4 mt-5 p-5 border border-gray-700 rounded-xl">
           {view === "list" ? (
-            <div className="grid md:grid-cols-3 grid-cols-1 gap-4">
+            <div className="gap-4 grid grid-cols-1 md:grid-cols-3">
               {data.map((pharmacy) => (
                 <CardList
                   key={pharmacy.id}

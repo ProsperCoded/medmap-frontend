@@ -4,7 +4,7 @@ import MedicationSearchBar from "../Components/searchBar";
 const Hero = () => {
   return (
     <div
-      className="hero_container p-20 md:h-[450px] h-[600px] flex items-center justify-center"
+      className="flex justify-center items-center p-20 h-[600px] md:h-[400px] hero_container"
       style={{
         background:
           "linear-gradient(163deg, #D3E4FD 24%, #F2FCE2 73%, rgba(207, 240, 173, 1) 98%)",
@@ -13,8 +13,8 @@ const Hero = () => {
         WebkitBackdropFilter: "blur(10px)", // For Safari support
       }}
     >
-      <div className="text-center space-y-10">
-        <h1 className="md:text-5xl text-3xl mb-4 text_dark  ">
+      <div className="space-y-10 text-center">
+        <h1 className="mb-4 text-3xl md:text-5xl text_dark">
           Find your <span className="heading">medications</span> at nearby
           pharmacies
         </h1>
@@ -23,16 +23,16 @@ const Hero = () => {
           you, saving you time and ensuring you get the care you deserve.
         </p>
         <MedicationSearchBar />
-        <div className="flex gap-4 items-center justify-center">
+        <div className="flex justify-center items-center gap-4">
           <Link
             to={"/auth/signup"}
-            className="w-32 md:w-40 px-6  py-3 text-sm font-medium text-white bg-[#323432] rounded-xl hover:bg-[#22c3dd] transition duration-300 ease-in-out cursor-pointer"
+            className="bg-[#323432] hover:bg-[#22c3dd] px-6 py-3 rounded-xl w-32 md:w-40 font-medium text-white text-sm transition duration-300 ease-in-out cursor-pointer"
           >
             Register
           </Link>
           <Link
             to={"/auth/login"}
-            className="w-32 md:w-40 px-6  py-3 text-sm font-medium text-white bg-[#22c3dd] rounded-xl hover:bg-[#323432] transition duration-300 ease-in-out cursor-pointer"
+            className="bg-[#22c3dd] hover:bg-[#323432] px-6 py-3 rounded-xl w-32 md:w-40 font-medium text-white text-sm transition duration-300 ease-in-out cursor-pointer"
           >
             Login
           </Link>

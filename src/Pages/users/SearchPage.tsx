@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Nav from "../../Components/user/Nav";
+import Navbar from "../../Ui/Navbar";
 import Card from "../../Components/user/Card";
 import { useNavigate, useParams } from "react-router-dom";
 import { getMed } from "../../api/Client/search.api";
@@ -78,7 +78,7 @@ const SearchPage = () => {
 
   return (
     <div className="min-h-screen text-white">
-      <Nav />
+      <Navbar />
       <div className="px-4 py-6">
         <div className="flex items-center gap-3">
           <button
@@ -99,7 +99,7 @@ const SearchPage = () => {
                 d="M15 19l-7-7 7-7"
               />
             </svg>
-            <span className="text-sm font-medium">Back</span>
+            <span className="font-medium text-sm">Back</span>
           </button>
 
           <div className="relative flex-1">
@@ -109,10 +109,10 @@ const SearchPage = () => {
               onChange={(e) => setSearchValue(e.target.value)}
               value={searchValue}
               onKeyDown={(e) => e.key === "Enter" && handleSearch(e)}
-              className="w-full pl-10 pr-4 py-2 text-zinc-900 placeholder-zinc-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#22c3dd] border border-zinc-700 transition"
+              className="py-2 pr-4 pl-10 border border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#22c3dd] w-full text-zinc-900 transition placeholder-zinc-400"
             />
             <svg
-              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-zinc-400"
+              className="top-1/2 left-3 absolute text-zinc-400 -translate-y-1/2 transform"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -131,22 +131,22 @@ const SearchPage = () => {
         </div>
       </div>
 
-      <div className="mt-5 m-5">
-        <div className="grid grid-cols-12 gap-10">
-          <div className="md:col-span-3 col-span-12">
-            <p className="mb-4 text-lg font-semibold text-gray-800 ">
+      <div className="m-5 mt-5">
+        <div className="gap-10 grid grid-cols-12">
+          <div className="col-span-12 md:col-span-3">
+            <p className="mb-4 font-semibold text-gray-800 text-lg">
               Results for "{searchValue}"
             </p>
           </div>
 
-          <div className="md:col-span-9 col-span-12">
+          <div className="col-span-12 md:col-span-9">
             <div>
               <div className="flex justify-between items-center mb-4">
                 <h1 className="text-gray-900">
                   {results.length} results found
                 </h1>
                 <div>
-                  <div className="inline-flex items-center border border-gray-700 rounded-full p-1 text-sm font-medium">
+                  <div className="inline-flex items-center p-1 border border-gray-700 rounded-full font-medium text-sm">
                     <button
                       onClick={() => setView("list")}
                       className={`flex items-center gap-1 px-4 py-1.5 rounded-full transition ${
@@ -157,7 +157,7 @@ const SearchPage = () => {
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className="h-4 w-4"
+                        className="w-4 h-4"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -182,7 +182,7 @@ const SearchPage = () => {
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className="h-4 w-4"
+                        className="w-4 h-4"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -200,11 +200,11 @@ const SearchPage = () => {
                 </div>
               </div>
 
-              <div className="rounded-xl mt-5 m-3 border border-gray-700 p-5 bg-white shadow-md">
+              <div className="bg-white shadow-md m-3 mt-5 p-5 border border-gray-700 rounded-xl">
                 {loading && <p>Loading...</p>}
                 {results.length === 0 && !loading && <p>No results found.</p>}
                 {view === "list" ? (
-                  <div className="grid md:grid-cols-3 grid-cols-1 gap-4">
+                  <div className="gap-4 grid grid-cols-1 md:grid-cols-3">
                     {results.map((drug) => (
                       <Card
                         key={drug.id}
@@ -214,7 +214,9 @@ const SearchPage = () => {
                         userlat={userLocation?.lat}
                         userlng={userLocation?.lng}
                         address={drug.pharmacy.contactInfo.address}
-                        onDirectionsClick={() => handleDirections(drug.pharmacy.contactInfo)}
+                        onDirectionsClick={() =>
+                          handleDirections(drug.pharmacy.contactInfo)
+                        }
                       />
                     ))}
                   </div>
