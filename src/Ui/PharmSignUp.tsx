@@ -4,7 +4,7 @@ import Logo from "../Components/Logo";
 import LocationIQGeocoder from "./locationIq";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/authContext";
-import { pharmacySignUp } from "../api/Pharmacy/auth.api";
+import { pharmacySignUp } from "../api/auth.api";
 import { toast } from "react-hot-toast";
 import { storeSession } from "../lib/utils";
 
@@ -94,7 +94,7 @@ const PharmacySignUpForm = () => {
         }
         if (response.status === "success") {
           toast.success(response.message);
-          setUser(response.data);
+          setUser(response.data.user);
           setIsAuthenticated(true);
           storeSession(response.data.token, "pharmacy");
           navigate("/");

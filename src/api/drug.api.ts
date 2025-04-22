@@ -1,4 +1,5 @@
-import { Response, Drug } from "../../lib/Types/response.type";
+import { Response, Drug } from "../lib/Types/response.type";
+import { DrugSearchResponse, DrugSearchParams } from "../lib/Types/drug.types";
 import { api } from "./base.api";
 
 export const createDrug = async (
@@ -106,6 +107,71 @@ export const getDrugById = async (id: string): Promise<Response<Drug>> => {
       status: "error",
       message: "Failed to fetch drug",
       data: {} as Drug,
+      error: {
+        cause: "Unknown error",
+        statusCode: 500,
+      },
+    };
+  }
+};
+
+export const searchDrugs = async (
+  params: DrugSearchParams
+): Promise<Response<DrugSearchResponse>> => {
+  try {
+    const response = await api.get<Response<DrugSearchResponse>>(
+      "/drugs/search",
+      {
+        params,
+      }
+    );
+    return response.data;
+  } catch (error: any) {
+    if (error.response?.data) {
+      return error.response.data;
+    }
+    return {
+      status: "error",
+      message: "Failed to search drugs",
+      data: {
+        data: [],
+        pagination: {
+          hasMore: false,
+          hasPrev: false,
+          totalItems: 0,
+          totalPages: 0,
+          page: 1,
+          limit: 10,
+        },
+      },
+      error: {
+        cause: "Unknown error",
+        statusCode: 500,
+      },
+    };
+  }
+};
+
+export const getAllDrugs = async (params?: {
+  illnessId?: string;
+  minStocks?: number;
+  maxStocks?: number;
+  minPrice?: number;
+  maxPrice?: number;
+}): Promise<Response<Drug[]>> => {
+  try {
+    const response = await api.get<Response<Drug[]>>("/drugs", {
+      params,
+    });
+    return response.data;
+  } catch (error: any) {
+    if (error.response?.data) {
+      return error.response.data;
+    }
+    return {
+      status: "error",
+      message: "Failed to fetch drugs",
+      data: [] as Drug[],
       error: {
         cause: "Unknown error",
         statusCode: 500,

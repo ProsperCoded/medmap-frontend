@@ -103,11 +103,17 @@ export interface Drug {
       pharmacyId: string;
     };
   };
-  illnessDrugs: {
-    illness: string;
+  illnessDrugs?: {
+    illnessId: string;
+    illness: Illness;
   }[];
 }
-
+export interface Illness {
+  id: string;
+  name: string;
+  description: string;
+  precautions: string[];
+}
 export interface DrugResponse {
   message: string;
   data: {

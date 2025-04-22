@@ -6,7 +6,7 @@ import { userLogin } from "../api/auth.api";
 import { toast } from "react-hot-toast";
 import { storeSession } from "../lib/utils";
 import { useAuth } from "../context/authContext";
-import { pharmacyLogin } from "../api/Pharmacy/auth.api";
+import { pharmacyLogin } from "../api/auth.api";
 
 interface TabPanelProps {
   children?: React.ReactNode;

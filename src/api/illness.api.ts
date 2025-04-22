@@ -1,73 +1,184 @@
-import { ApiResponse } from "./base.api";
-import { axiosInstance } from "./base.api";
+import { Response } from "../lib/Types/response.type";
 import {
   Illness,
-  IllnessSearchParams,
   IllnessSearchResponse,
   CreateIllnessDTO,
   UpdateIllnessDTO,
 } from "../lib/Types/illness.types";
+import { api } from "./base.api";
 
-export const illnessApi = {
-  async searchIllnesses(
-    params: IllnessSearchParams
-  ): Promise<ApiResponse<IllnessSearchResponse>> {
-    const queryParams = new URLSearchParams();
-    if (params.page) queryParams.append("page", params.page.toString());
-    if (params.limit) queryParams.append("limit", params.limit.toString());
-    if (params.query) queryParams.append("query", params.query);
-
-    const response = await axiosInstance.get(
-      `/illnesses/search?${queryParams.toString()}`
-    );
+export const createIllness = async (
+  data: CreateIllnessDTO
+): Promise<Response<Illness>> => {
+  try {
+    const response = await api.post<Response<Illness>>("/illnesses", data);
     return response.data;
-  },
+  } catch (error: any) {
+    if (error.response?.data) {
+      return error.response.data;
+    }
+    return {
+      status: "error",
+      message: "Failed to create illness",
+      data: {} as Illness,
+      error: {
+        cause: "Unknown error",
+        statusCode: 500,
+      },
+    };
+  }
+};
 
-  async getAllIllnesses(): Promise<ApiResponse<Illness[]>> {
-    const response = await axiosInstance.get("/illnesses");
+export const getIllnessById = async (
+  id: string
+): Promise<Response<Illness>> => {
+  try {
+    const response = await api.get<Response<Illness>>(`/illnesses/${id}`);
     return response.data;
-  },
+  } catch (error: any) {
+    if (error.response?.data) {
+      return error.response.data;
+    }
+    return {
+      status: "error",
+      message: "Failed to fetch illness",
+      data: {} as Illness,
+      error: {
+        cause: "Unknown error",
+        statusCode: 500,
+      },
+    };
+  }
+};
 
-  async getIllnessById(id: string): Promise<ApiResponse<Illness>> {
-    const response = await axiosInstance.get(`/illnesses/${id}`);
+export const updateIllness = async (
+  id: string,
+  data: UpdateIllnessDTO
+): Promise<Response<Illness>> => {
+  try {
+    const response = await api.put<Response<Illness>>(`/illnesses/${id}`, data);
     return response.data;
-  },
+  } catch (error: any) {
+    if (error.response?.data) {
+      return error.response.data;
+    }
+    return {
+      status: "error",
+      message: "Failed to update illness",
+      data: {} as Illness,
+      error: {
+        cause: "Unknown error",
+        statusCode: 500,
+      },
+    };
+  }
+};
 
-  async createIllness(data: CreateIllnessDTO): Promise<ApiResponse<Illness>> {
-    const response = await axiosInstance.post("/illnesses", data);
+export const deleteIllness = async (id: string): Promise<Response<Illness>> => {
+  try {
+    const response = await api.delete<Response<Illness>>(`/illnesses/${id}`);
     return response.data;
-  },
+  } catch (error: any) {
+    if (error.response?.data) {
+      return error.response.data;
+    }
+    return {
+      status: "error",
+      message: "Failed to delete illness",
+      data: {} as Illness,
+      error: {
+        cause: "Unknown error",
+        statusCode: 500,
+      },
+    };
+  }
+};
 
-  async updateIllness(
-    id: string,
-    data: UpdateIllnessDTO
-  ): Promise<ApiResponse<Illness>> {
-    const response = await axiosInstance.put(`/illnesses/${id}`, data);
-    return response.data;
-  },
-
-  async deleteIllness(id: string): Promise<ApiResponse<void>> {
-    const response = await axiosInstance.delete(`/illnesses/${id}`);
-    return response.data;
-  },
-
-  async linkDrugToIllness(
-    illnessId: string,
-    drugId: string
-  ): Promise<ApiResponse<void>> {
-    const response = await axiosInstance.post(
+export const linkDrugToIllness = async (
+  illnessId: string,
+  drugId: string
+): Promise<Response<void>> => {
+  try {
+    const response = await api.post<Response<void>>(
       `/illnesses/${illnessId}/drugs/${drugId}`
     );
     return response.data;
-  },
+  } catch (error: any) {
+    if (error.response?.data) {
+      return error.response.data;
+    }
+    return {
+      status: "error",
+      message: "Failed to link drug to illness",
+      data: undefined,
+      error: {
+        cause: "Unknown error",
+        statusCode: 500,
+      },
+    };
+  }
+};
 
-  async unlinkDrugFromIllness(
-    illnessId: string,
-    drugId: string
-  ): Promise<ApiResponse<void>> {
-    const response = await axiosInstance.delete(
+export const unlinkDrugFromIllness = async (
+  illnessId: string,
+  drugId: string
+): Promise<Response<void>> => {
+  try {
+    const response = await api.delete<Response<void>>(
       `/illnesses/${illnessId}/drugs/${drugId}`
     );
     return response.data;
-  },
+  } catch (error: any) {
+    if (error.response?.data) {
+      return error.response.data;
+    }
+    return {
+      status: "error",
+      message: "Failed to unlink drug from illness",
+      data: undefined,
+      error: {
+        cause: "Unknown error",
+        statusCode: 500,
+      },
+    };
+  }
+};
+
+export const searchIllnesses = async (params: {
+  page?: number;
+  limit?: number;
+  query?: string;
+}): Promise<Response<IllnessSearchResponse>> => {
+  try {
+    const response = await api.get<Response<IllnessSearchResponse>>(
+      "/illnesses/search",
+      {
+        params,
+      }
+    );
+    return response.data;
+  } catch (error: any) {
+    if (error.response?.data) {
+      return error.response.data;
+    }
+    return {
+      status: "error",
+      message: "Failed to search illnesses",
+      data: {
+        data: [],
+        pagination: {
+          hasMore: false,
+          hasPrev: false,
+          totalItems: 0,
+          totalPages: 0,
+          page: 1,
+          limit: 10,
+        },
+      },
+      error: {
+        cause: "Unknown error",
+        statusCode: 500,
+      },
+    };
+  }
 };
