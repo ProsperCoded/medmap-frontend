@@ -8,9 +8,9 @@ import {
 import { PharmacyProfile, UserProfile } from "../lib/Types/response.type";
 import Cookies from "js-cookie";
 import { getSession } from "../lib/utils";
-import { fetchUserProfile } from "../api/Client/user.api";
+import { fetchUserProfile } from "../api/user.api";
 import { motion } from "framer-motion";
-import { fetchPharmacyProfile } from "../api/Pharmacy/pharmacy.api";
+import { fetchPharmacyProfile } from "../api/pharmacy.api";
 
 interface AuthContextType {
   user: UserProfile | PharmacyProfile | null;

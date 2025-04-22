@@ -2,8 +2,8 @@ import {
   Response,
   UserProfile,
   PharmacyProfile,
-} from "../../lib/Types/response.type";
-import { api } from "../base.api";
+} from "../lib/Types/response.type";
+import { api } from "./base.api";
 
 export const fetchUserProfile = async (): Promise<UserProfile | null> => {
   try {

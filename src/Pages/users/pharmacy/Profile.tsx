@@ -1,310 +1,591 @@
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { toast } from "react-hot-toast";
+import { motion, AnimatePresence } from "framer-motion";
 import DashboardLayout from "../../../Components/Pharmacy/DashboardLayout";
-import LocationIQGeocoder from "../../../Ui/locationIq";
 import {
   fetchPharmacyProfile,
   updatePharmacyProfile,
-} from "../../../api/Pharmacy/pharmacy.api";
+} from "../../../api/pharmacy.api";
 import type { PharmacyProfile } from "../../../lib/Types/response.type";
+import { toast } from "react-hot-toast";
+import {
+  User,
+  Mail,
+  Phone,
+  MapPin,
+  Globe,
+  Info,
+  Loader2,
+  AlertCircle,
+  Store,
+  ExternalLink,
+  Check,
+  Camera,
+  MapPin as MapPinIcon,
+  Flag,
+} from "lucide-react";
 
 const ProfilePage = () => {
   const [profile, setProfile] = useState<PharmacyProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    email: "",
-    contactInfo: {
-      address: "",
-      phone: "",
-      state: "",
-      country: "",
-      longitude: 0,
-      latitude: 0,
-    },
-  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [shopImagePreview, setShopImagePreview] = useState<string | null>(null);
+  const [logoFile, setLogoFile] = useState<File | null>(null);
+  const [shopImageFile, setShopImageFile] = useState<File | null>(null);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
+  // Form fields
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [description, setDescription] = useState("");
+  const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
+  const [state, setState] = useState("");
+  const [country, setCountry] = useState("");
+  const [longitude, setLongitude] = useState("");
+  const [latitude, setLatitude] = useState("");
+  const [website, setWebsite] = useState("");
+
+  // Fetch pharmacy profile
   useEffect(() => {
-    const fetchProfile = async () => {
+    const getProfile = async () => {
       try {
         const data = await fetchPharmacyProfile();
         if (data) {
           setProfile(data);
-          setFormData({
-            name: data.name,
-            description: data.description || "",
-            email: data.email,
-            contactInfo: data.contactInfo,
-          });
+
+          // Initialize form fields
+          setName(data.name || "");
+          setEmail(data.email || "");
+          setDescription(data.description || "");
+          setPhone(data.contactInfo?.phone || "");
+          setAddress(data.contactInfo?.address || "");
+          setState(data.contactInfo?.state || "");
+          setCountry(data.contactInfo?.country || "");
+          setLongitude(data.contactInfo?.longitude?.toString() || "");
+          setLatitude(data.contactInfo?.latitude?.toString() || "");
+
+          if (data.logoUrl) setLogoPreview(data.logoUrl);
+          if (data.shopImageUrl) setShopImagePreview(data.shopImageUrl);
         }
       } catch (error) {
-        toast.error("Failed to fetch profile");
+        toast.error("Failed to load profile data");
+        console.error("Error fetching profile:", error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchProfile();
+    getProfile();
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!profile) return;
-
-    const form = new FormData();
-    form.append("name", formData.name);
-    form.append("description", formData.description);
-    form.append("contactInfo[address]", formData.contactInfo.address);
-    form.append("contactInfo[phone]", formData.contactInfo.phone);
-    form.append("contactInfo[state]", formData.contactInfo.state);
-    form.append("contactInfo[country]", formData.contactInfo.country);
-    form.append(
-      "contactInfo[longitude]",
-      formData.contactInfo.longitude.toString()
-    );
-    form.append(
-      "contactInfo[latitude]",
-      formData.contactInfo.latitude.toString()
-    );
-
-    const logoInput = document.querySelector(
-      'input[type="file"][accept="image/*"]'
-    ) as HTMLInputElement;
-    const shopInput = document.querySelectorAll(
-      'input[type="file"][accept="image/*"]'
-    )[1] as HTMLInputElement;
-
-    if (logoInput?.files?.[0]) {
-      form.append("logo", logoInput.files[0]);
-    }
-    if (shopInput?.files?.[0]) {
-      form.append("shop", shopInput.files[0]);
-    }
-
-    try {
-      const response = await updatePharmacyProfile(profile.id, form);
-      if (response.status === "success") {
-        toast.success(response.message);
-        // Update local state with new data
-        if (response.data) {
-          setProfile(response.data);
-          setFormData({
-            name: response.data.name,
-            description: response.data.description || "",
-            email: response.data.email,
-            contactInfo: response.data.contactInfo,
-          });
-        }
-      } else {
-        toast.error(response.message);
-      }
-    } catch (error) {
-      toast.error("Failed to update profile");
+  const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setLogoFile(file);
+      setLogoPreview(URL.createObjectURL(file));
     }
   };
 
-  if (isLoading) {
-    return (
-      <DashboardLayout title="Profile">
-        <div className="flex justify-center items-center h-64">
-          <div className="text-2xl animate-spin">🔄</div>
-        </div>
-      </DashboardLayout>
-    );
-  }
+  const handleShopImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setShopImageFile(file);
+      setShopImagePreview(URL.createObjectURL(file));
+    }
+  };
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!name.trim()) newErrors.name = "Pharmacy name is required";
+    if (!email.trim()) newErrors.email = "Email is required";
+    else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = "Email is invalid";
+
+    if (!phone.trim()) newErrors.phone = "Phone number is required";
+    if (!address.trim()) newErrors.address = "Address is required";
+    if (!state.trim()) newErrors.state = "State is required";
+    if (!country.trim()) newErrors.country = "Country is required";
+
+    if (longitude && isNaN(Number(longitude)))
+      newErrors.longitude = "Longitude must be a number";
+    if (latitude && isNaN(Number(latitude)))
+      newErrors.latitude = "Latitude must be a number";
+
+    if (
+      website &&
+      !/^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/.test(
+        website
+      )
+    )
+      newErrors.website = "Website URL is invalid";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (!validateForm()) return;
+
+    setIsSubmitting(true);
+
+    try {
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("email", email);
+      formData.append("description", description);
+      formData.append("contactInfo[phone]", phone);
+      formData.append("contactInfo[address]", address);
+      formData.append("contactInfo[state]", state);
+      formData.append("contactInfo[country]", country);
+
+      if (longitude) formData.append("contactInfo[longitude]", longitude);
+      if (latitude) formData.append("contactInfo[latitude]", latitude);
+      if (website) formData.append("website", website);
+
+      if (logoFile) formData.append("logo", logoFile);
+      if (shopImageFile) formData.append("shopImage", shopImageFile);
+
+      const result = await updatePharmacyProfile(formData);
+
+      if (result.status === "success") {
+        toast.success("Profile updated successfully");
+        setProfile(result.data);
+      } else {
+        toast.error(result.message || "Failed to update profile");
+      }
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      toast.error("Failed to update profile");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <DashboardLayout title="Profile">
-      <div className="mx-auto max-w-4xl">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="bg-white shadow-sm p-6 rounded-lg"
-        >
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Basic Information */}
-            <div>
-              <h3 className="mb-4 font-medium text-gray-900 text-lg">
-                Basic Information
-              </h3>
-              <div className="gap-4 grid grid-cols-1 sm:grid-cols-2">
-                <div>
-                  <label className="block font-medium text-gray-700 text-sm">
-                    Name
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.name}
-                    onChange={(e) =>
-                      setFormData((prev) => ({ ...prev, name: e.target.value }))
-                    }
-                    className="block shadow-sm mt-1 border-gray-300 focus:border-[#22c3dd] rounded-md focus:ring-[#22c3dd] w-full"
+      <AnimatePresence>
+        {isLoading ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="flex flex-col justify-center items-center h-64"
+          >
+            <Loader2 className="mb-4 w-12 h-12 text-[#22c3dd] animate-spin" />
+            <p className="font-medium text-gray-500">Loading profile data...</p>
+          </motion.div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <div className="bg-white shadow-sm mb-6 border border-gray-100 rounded-lg">
+              <div className="relative bg-gradient-to-r from-[#22c3dd] to-[#1ba8c1] h-40">
+                {shopImagePreview && (
+                  <img
+                    src={shopImagePreview}
+                    alt="Pharmacy"
+                    className="opacity-40 w-full h-full object-cover"
                   />
-                </div>
-
-                <div>
-                  <label className="block font-medium text-gray-700 text-sm">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    value={formData.email}
-                    disabled
-                    className="block bg-gray-50 shadow-sm mt-1 border-gray-300 rounded-md w-full"
-                  />
-                </div>
-
-                <div className="sm:col-span-2">
-                  <label className="block font-medium text-gray-700 text-sm">
-                    Description
-                  </label>
-                  <textarea
-                    value={formData.description}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        description: e.target.value,
-                      }))
-                    }
-                    rows={3}
-                    className="block shadow-sm mt-1 border-gray-300 focus:border-[#22c3dd] rounded-md focus:ring-[#22c3dd] w-full"
-                  />
+                )}
+                <div className="right-0 bottom-0 left-0 absolute p-6 text-white">
+                  <div className="flex items-end">
+                    <div className="relative mr-4">
+                      <div className="bg-white shadow-md border-4 border-white rounded-full w-24 h-24 overflow-hidden">
+                        {logoPreview ? (
+                          <img
+                            src={logoPreview}
+                            alt={profile?.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="flex justify-center items-center bg-gray-200 w-full h-full">
+                            <Store size={32} className="text-gray-400" />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <div>
+                      <h2 className="drop-shadow-lg font-bold text-2xl">
+                        {profile?.name}
+                      </h2>
+                      <p className="opacity-90 drop-shadow-md text-sm">
+                        {profile?.email}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {/* Contact Information */}
-            <div>
-              <h3 className="mb-4 font-medium text-gray-900 text-lg">
-                Contact Information
-              </h3>
-              <div className="gap-4 grid grid-cols-1 sm:grid-cols-2">
-                <div>
-                  <label className="block font-medium text-gray-700 text-sm">
-                    Phone
-                  </label>
-                  <input
-                    type="tel"
-                    value={formData.contactInfo.phone}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        contactInfo: {
-                          ...prev.contactInfo,
-                          phone: e.target.value,
-                        },
-                      }))
-                    }
-                    className="block shadow-sm mt-1 border-gray-300 focus:border-[#22c3dd] rounded-md focus:ring-[#22c3dd] w-full"
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-medium text-gray-700 text-sm">
-                    State
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.contactInfo.state}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        contactInfo: {
-                          ...prev.contactInfo,
-                          state: e.target.value,
-                        },
-                      }))
-                    }
-                    className="block shadow-sm mt-1 border-gray-300 focus:border-[#22c3dd] rounded-md focus:ring-[#22c3dd] w-full"
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-medium text-gray-700 text-sm">
-                    Country
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.contactInfo.country}
-                    onChange={(e) =>
-                      setFormData((prev) => ({
-                        ...prev,
-                        contactInfo: {
-                          ...prev.contactInfo,
-                          country: e.target.value,
-                        },
-                      }))
-                    }
-                    className="block shadow-sm mt-1 border-gray-300 focus:border-[#22c3dd] rounded-md focus:ring-[#22c3dd] w-full"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Location */}
-            <div>
-              <h3 className="mb-4 font-medium text-gray-900 text-lg">
-                Location
-              </h3>
-              <LocationIQGeocoder onLocationChange={setFormData} />
-            </div>
-
-            {/* Images */}
-            <div>
-              <h3 className="mb-4 font-medium text-gray-900 text-lg">Images</h3>
-              <div className="gap-4 grid grid-cols-1 sm:grid-cols-2">
-                <div>
-                  <label className="block font-medium text-gray-700 text-sm">
-                    Logo
-                  </label>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="block mt-1 w-full"
-                  />
-                  {profile?.logoUrl && (
-                    <img
-                      src={profile.logoUrl}
-                      alt="Logo"
-                      className="mt-2 rounded w-20 h-20 object-cover"
-                    />
+              <div className="p-6 text-gray-700">
+                {profile?.description && (
+                  <p className="mb-4">{profile.description}</p>
+                )}
+                <div className="gap-4 grid grid-cols-1 md:grid-cols-2 mt-2">
+                  {profile?.contactInfo?.phone && (
+                    <div className="flex items-center">
+                      <Phone size={16} className="mr-2 text-gray-500" />
+                      <span>{profile.contactInfo.phone}</span>
+                    </div>
                   )}
-                </div>
-
-                <div>
-                  <label className="block font-medium text-gray-700 text-sm">
-                    Shop Image
-                  </label>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="block mt-1 w-full"
-                  />
-                  {profile?.shopImageUrl && (
-                    <img
-                      src={profile.shopImageUrl}
-                      alt="Shop"
-                      className="mt-2 rounded w-20 h-20 object-cover"
-                    />
+                  {profile?.contactInfo?.address && (
+                    <div className="flex items-center">
+                      <MapPin size={16} className="mr-2 text-gray-500" />
+                      <span>{profile.contactInfo.address}</span>
+                    </div>
                   )}
+                  {profile?.contactInfo?.state &&
+                    profile?.contactInfo?.country && (
+                      <div className="flex items-center">
+                        <Flag size={16} className="mr-2 text-gray-500" />
+                        <span>
+                          {profile.contactInfo.state},{" "}
+                          {profile.contactInfo.country}
+                        </span>
+                      </div>
+                    )}
                 </div>
               </div>
             </div>
 
-            <div className="flex justify-end">
-              <button
-                type="submit"
-                className="bg-[#22c3dd] hover:bg-[#1baac5] px-4 py-2 rounded-lg text-white transition"
-              >
-                Save Changes
-              </button>
+            <div className="bg-white shadow-sm p-6 border border-gray-100 rounded-lg">
+              <h3 className="mb-6 font-semibold text-gray-800 text-xl">
+                Edit Profile
+              </h3>
+
+              <form onSubmit={handleSubmit}>
+                <div className="gap-x-6 gap-y-4 grid grid-cols-1 md:grid-cols-2">
+                  <div>
+                    <label className="block mb-1 font-medium text-gray-700 text-sm">
+                      Pharmacy Name*
+                    </label>
+                    <div className="relative">
+                      <div className="left-0 absolute inset-y-0 flex items-center pl-3 pointer-events-none">
+                        <Store size={16} className="text-gray-400" />
+                      </div>
+                      <input
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className={`pl-10 w-full p-2 border ${
+                          errors.name ? "border-red-500" : "border-gray-300"
+                        } rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c3dd]`}
+                      />
+                    </div>
+                    {errors.name && (
+                      <p className="flex items-center mt-1 text-red-500 text-sm">
+                        <AlertCircle size={14} className="mr-1" />
+                        {errors.name}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block mb-1 font-medium text-gray-700 text-sm">
+                      Email Address*
+                    </label>
+                    <div className="relative">
+                      <div className="left-0 absolute inset-y-0 flex items-center pl-3 pointer-events-none">
+                        <Mail size={16} className="text-gray-400" />
+                      </div>
+                      <input
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className={`pl-10 w-full p-2 border ${
+                          errors.email ? "border-red-500" : "border-gray-300"
+                        } rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c3dd]`}
+                      />
+                    </div>
+                    {errors.email && (
+                      <p className="flex items-center mt-1 text-red-500 text-sm">
+                        <AlertCircle size={14} className="mr-1" />
+                        {errors.email}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <label className="block mb-1 font-medium text-gray-700 text-sm">
+                      Description
+                    </label>
+                    <div className="relative">
+                      <div className="top-3 left-3 absolute flex items-center pointer-events-none">
+                        <Info size={16} className="text-gray-400" />
+                      </div>
+                      <textarea
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        rows={3}
+                        className="p-2 pl-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c3dd] w-full"
+                        placeholder="Tell customers about your pharmacy..."
+                      ></textarea>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block mb-1 font-medium text-gray-700 text-sm">
+                      Phone Number*
+                    </label>
+                    <div className="relative">
+                      <div className="left-0 absolute inset-y-0 flex items-center pl-3 pointer-events-none">
+                        <Phone size={16} className="text-gray-400" />
+                      </div>
+                      <input
+                        type="tel"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        className={`pl-10 w-full p-2 border ${
+                          errors.phone ? "border-red-500" : "border-gray-300"
+                        } rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c3dd]`}
+                      />
+                    </div>
+                    {errors.phone && (
+                      <p className="flex items-center mt-1 text-red-500 text-sm">
+                        <AlertCircle size={14} className="mr-1" />
+                        {errors.phone}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block mb-1 font-medium text-gray-700 text-sm">
+                      Website URL
+                    </label>
+                    <div className="relative">
+                      <div className="left-0 absolute inset-y-0 flex items-center pl-3 pointer-events-none">
+                        <Globe size={16} className="text-gray-400" />
+                      </div>
+                      <input
+                        type="text"
+                        value={website}
+                        onChange={(e) => setWebsite(e.target.value)}
+                        className={`pl-10 w-full p-2 border ${
+                          errors.website ? "border-red-500" : "border-gray-300"
+                        } rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c3dd]`}
+                        placeholder="e.g. www.yourpharmacy.com"
+                      />
+                    </div>
+                    {errors.website && (
+                      <p className="flex items-center mt-1 text-red-500 text-sm">
+                        <AlertCircle size={14} className="mr-1" />
+                        {errors.website}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="md:col-span-2">
+                    <label className="block mb-1 font-medium text-gray-700 text-sm">
+                      Address*
+                    </label>
+                    <div className="relative">
+                      <div className="left-0 absolute inset-y-0 flex items-center pl-3 pointer-events-none">
+                        <MapPin size={16} className="text-gray-400" />
+                      </div>
+                      <input
+                        type="text"
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
+                        className={`pl-10 w-full p-2 border ${
+                          errors.address ? "border-red-500" : "border-gray-300"
+                        } rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c3dd]`}
+                      />
+                    </div>
+                    {errors.address && (
+                      <p className="flex items-center mt-1 text-red-500 text-sm">
+                        <AlertCircle size={14} className="mr-1" />
+                        {errors.address}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block mb-1 font-medium text-gray-700 text-sm">
+                      State*
+                    </label>
+                    <div className="relative">
+                      <div className="left-0 absolute inset-y-0 flex items-center pl-3 pointer-events-none">
+                        <MapPinIcon size={16} className="text-gray-400" />
+                      </div>
+                      <input
+                        type="text"
+                        value={state}
+                        onChange={(e) => setState(e.target.value)}
+                        className={`pl-10 w-full p-2 border ${
+                          errors.state ? "border-red-500" : "border-gray-300"
+                        } rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c3dd]`}
+                      />
+                    </div>
+                    {errors.state && (
+                      <p className="flex items-center mt-1 text-red-500 text-sm">
+                        <AlertCircle size={14} className="mr-1" />
+                        {errors.state}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block mb-1 font-medium text-gray-700 text-sm">
+                      Country*
+                    </label>
+                    <div className="relative">
+                      <div className="left-0 absolute inset-y-0 flex items-center pl-3 pointer-events-none">
+                        <Flag size={16} className="text-gray-400" />
+                      </div>
+                      <input
+                        type="text"
+                        value={country}
+                        onChange={(e) => setCountry(e.target.value)}
+                        className={`pl-10 w-full p-2 border ${
+                          errors.country ? "border-red-500" : "border-gray-300"
+                        } rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c3dd]`}
+                      />
+                    </div>
+                    {errors.country && (
+                      <p className="flex items-center mt-1 text-red-500 text-sm">
+                        <AlertCircle size={14} className="mr-1" />
+                        {errors.country}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block mb-1 font-medium text-gray-700 text-sm">
+                      Longitude
+                    </label>
+                    <input
+                      type="text"
+                      value={longitude}
+                      onChange={(e) => setLongitude(e.target.value)}
+                      className={`w-full p-2 border ${
+                        errors.longitude ? "border-red-500" : "border-gray-300"
+                      } rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c3dd]`}
+                      placeholder="e.g. 7.3986"
+                    />
+                    {errors.longitude && (
+                      <p className="flex items-center mt-1 text-red-500 text-sm">
+                        <AlertCircle size={14} className="mr-1" />
+                        {errors.longitude}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block mb-1 font-medium text-gray-700 text-sm">
+                      Latitude
+                    </label>
+                    <input
+                      type="text"
+                      value={latitude}
+                      onChange={(e) => setLatitude(e.target.value)}
+                      className={`w-full p-2 border ${
+                        errors.latitude ? "border-red-500" : "border-gray-300"
+                      } rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c3dd]`}
+                      placeholder="e.g. 9.0765"
+                    />
+                    {errors.latitude && (
+                      <p className="flex items-center mt-1 text-red-500 text-sm">
+                        <AlertCircle size={14} className="mr-1" />
+                        {errors.latitude}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block mb-2 font-medium text-gray-700 text-sm">
+                      Logo Image
+                    </label>
+                    <div className="flex items-center">
+                      {logoPreview && (
+                        <div className="relative mr-4">
+                          <div className="border border-gray-200 rounded-full w-16 h-16 overflow-hidden">
+                            <img
+                              src={logoPreview}
+                              alt="Logo preview"
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        </div>
+                      )}
+                      <label className="inline-flex items-center bg-white hover:bg-gray-50 shadow-sm px-4 py-2 border border-gray-300 rounded-md focus:outline-none font-medium text-gray-700 text-sm cursor-pointer">
+                        <Camera size={18} className="mr-2 text-gray-500" />
+                        {logoPreview ? "Change Logo" : "Upload Logo"}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleLogoChange}
+                          className="sr-only"
+                        />
+                      </label>
+                    </div>
+                    <p className="mt-1 text-gray-500 text-xs">
+                      JPG, PNG or GIF. Max 2MB.
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="block mb-2 font-medium text-gray-700 text-sm">
+                      Shop Image
+                    </label>
+                    <div className="flex items-center">
+                      {shopImagePreview && (
+                        <div className="relative mr-4">
+                          <div className="border border-gray-200 rounded-md w-24 h-16 overflow-hidden">
+                            <img
+                              src={shopImagePreview}
+                              alt="Shop preview"
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                        </div>
+                      )}
+                      <label className="inline-flex items-center bg-white hover:bg-gray-50 shadow-sm px-4 py-2 border border-gray-300 rounded-md focus:outline-none font-medium text-gray-700 text-sm cursor-pointer">
+                        <Camera size={18} className="mr-2 text-gray-500" />
+                        {shopImagePreview
+                          ? "Change Image"
+                          : "Upload Shop Image"}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleShopImageChange}
+                          className="sr-only"
+                        />
+                      </label>
+                    </div>
+                    <p className="mt-1 text-gray-500 text-xs">
+                      JPG, PNG or GIF. Max 5MB.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-8">
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="flex justify-center items-center bg-[#22c3dd] hover:bg-[#1ba8c1] px-6 py-2 rounded-md focus:outline-none text-white"
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 size={18} className="mr-2 animate-spin" />
+                        Updating Profile...
+                      </>
+                    ) : (
+                      <>
+                        <Check size={18} className="mr-2" />
+                        Save Changes
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
             </div>
-          </form>
-        </motion.div>
-      </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </DashboardLayout>
   );
 };

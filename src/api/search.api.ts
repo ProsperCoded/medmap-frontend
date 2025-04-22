@@ -1,5 +1,5 @@
-import { DrugResponse, Response } from "../../lib/Types/response.type";
-import { api } from "../base.api";
+import { DrugResponse, Response } from "../lib/Types/response.type";
+import { api } from "./base.api";
 
 interface SearchParams {
   page?: number;
@@ -28,7 +28,7 @@ export const getMed = async (med: SearchParams) => {
     });
     console.log(response);
 
-    return response.data; 
+    return response.data;
   } catch (error) {
     console.error("Error fetching medications:", error);
     return null;

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Logo from "../Components/Logo";
-import { userSignUp } from "../api/Client/auth.api";
+import { userSignUp } from "../api/auth.api";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/authContext";

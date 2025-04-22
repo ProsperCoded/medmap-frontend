@@ -2,7 +2,7 @@ import * as React from "react";
 import { AppBar, Tabs, Tab, Typography, Box } from "@mui/material";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-import { userLogin } from "../api/Client/auth.api";
+import { userLogin } from "../api/auth.api";
 import { toast } from "react-hot-toast";
 import { storeSession } from "../lib/utils";
 import { useAuth } from "../context/authContext";

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Navbar from "../../Ui/Navbar";
 import Card from "../../Components/user/Card";
 import { useNavigate, useLocation } from "react-router-dom";
-import { getMed } from "../../api/Client/search.api";
+import { getMed } from "../../api/search.api";
 import MapSearch from "../../Components/user/Map_Search";
 import { Drug } from "../../lib/Types/response.type"; // Update this import path if needed
 

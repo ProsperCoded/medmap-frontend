@@ -1,19 +1,5 @@
 import { Response, Drug } from "../../lib/Types/response.type";
-import { api } from "../base.api";
-
-interface DrugFormData {
-  name: string;
-  description?: string;
-  sideEffects: string[];
-  expiryDate: Date;
-  price: number;
-  stocks?: number;
-  composition?: string;
-  manufacturer?: string;
-  uses?: string;
-  illnessIds?: string[];
-  image?: File;
-}
+import { api } from "./base.api";
 
 export const createDrug = async (
   formData: FormData
