@@ -17,17 +17,7 @@ const UserAvatar = () => {
       return `${user.firstname.charAt(0)}${user.lastname.charAt(
         0
       )}`.toUpperCase();
-    } else if ("user" in user) {
-      // Auth type
-      return `${user.user.firstname.charAt(0)}${user.user.lastname.charAt(
-        0
-      )}`.toUpperCase();
-    } else if ("data" in user && user.data) {
-      // PharmacyProfile type
-      const name = user.data.name || "";
-      return name.charAt(0).toUpperCase();
     }
-
     return "?";
   };
 
@@ -38,12 +28,6 @@ const UserAvatar = () => {
     if ("firstname" in user && "lastname" in user) {
       // UserProfile type
       return `${user.firstname} ${user.lastname}`;
-    } else if ("user" in user) {
-      // Auth type
-      return `${user.user.firstname} ${user.user.lastname}`;
-    } else if ("data" in user && user.data) {
-      // PharmacyProfile type
-      return user.data.name || "Pharmacy";
     }
 
     return "User";
@@ -56,12 +40,6 @@ const UserAvatar = () => {
     if ("email" in user) {
       // UserProfile type
       return user.email;
-    } else if ("user" in user) {
-      // Auth type
-      return user.user.email;
-    } else if ("data" in user && user.data) {
-      // PharmacyProfile type
-      return user.data.email || "";
     }
 
     return "";

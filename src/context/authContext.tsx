@@ -5,7 +5,7 @@ import {
   useState,
   useEffect,
 } from "react";
-import { Auth, PharmacyProfile, UserProfile } from "../lib/Types/response.type";
+import { PharmacyProfile, UserProfile } from "../lib/Types/response.type";
 import Cookies from "js-cookie";
 import { getSession } from "../lib/utils";
 import { fetchUserProfile } from "../api/Client/user.api";
@@ -13,9 +13,9 @@ import { motion } from "framer-motion";
 import { fetchPharmacyProfile } from "../api/Pharmacy/pharmacy.api";
 
 interface AuthContextType {
-  user: Auth | UserProfile | PharmacyProfile | null;
+  user: UserProfile | PharmacyProfile | null;
   setUser: React.Dispatch<
-    React.SetStateAction<Auth | UserProfile | PharmacyProfile | null>
+    React.SetStateAction<UserProfile | PharmacyProfile | null>
   >;
   isAuthenticated: boolean;
   setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
@@ -28,9 +28,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<Auth | UserProfile | PharmacyProfile | null>(
-    null
-  );
+  const [user, setUser] = useState<UserProfile | PharmacyProfile | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [userType, setUserType] = useState<"user" | "pharmacy" | null>(null);
