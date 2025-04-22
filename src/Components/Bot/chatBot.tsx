@@ -15,7 +15,7 @@ const PharmacyAssistant = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       from: "bot",
-      text: "Hello! I'm your AI pharmacy assistant. I can help you find medications, provide general information about drugs, and answer health-related questions. How can I assist you today?",
+      text: "Hi there! I'm your AI pharmacy assistant. I can help you find medications and give general information about them. What would you like to know today?",
       time: new Date().toLocaleTimeString([], {
         hour: "2-digit",
         minute: "2-digit",

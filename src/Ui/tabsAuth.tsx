@@ -6,6 +6,7 @@ import { userLogin } from "../api/Client/auth.api";
 import { toast } from "react-hot-toast";
 import { storeSession } from "../lib/utils";
 import { useAuth } from "../context/authContext";
+import { pharmacyLogin } from "../api/Pharmacy/auth.api";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -127,11 +128,38 @@ const ClientLoginForm = () => {
 };
 
 const PharmacyLoginForm = () => {
+  const { setUser, setIsAuthenticated } = useAuth();
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      const response = await pharmacyLogin({ email, password });
+      console.log(response);
+
+      if (response.error) {
+        toast.error(response.error?.cause);
+      }
+
+      if (response.status === "success") {
+        toast.success(response.message);
+        setUser(response.data);
+        setIsAuthenticated(true);
+        storeSession(response.data.token);
+        navigate("/homepage");
+      }
+    } catch (error) {
+      // Handle any other errors that occur during the login attempt
+      toast.error("An unexpected error occurred.");
+      console.error(error); // Log the error for debugging purposes
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
