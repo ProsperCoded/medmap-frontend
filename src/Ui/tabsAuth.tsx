@@ -198,10 +198,11 @@ const PharmacyLoginForm = () => {
         <motion.button
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.98 }}
+          disabled={isLoading}
           type="submit"
           className="bg-[#22c3dd] hover:bg-[#1bb2cc] p-3 rounded-lg w-full font-semibold text-white transition-all"
         >
-          Sign in
+          {isLoading ? "Submitting..." : "Sign in"}
         </motion.button>
       </form>
 
