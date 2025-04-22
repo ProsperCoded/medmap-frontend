@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, UserCircle2, Bot } from "lucide-react";
+import { socket } from "../../socket";
 
 type Message = {
   from: "bot" | "user";
@@ -15,7 +16,10 @@ const PharmacyAssistant = () => {
     {
       from: "bot",
       text: "Hello! I'm your AI pharmacy assistant. I can help you find medications, provide general information about drugs, and answer health-related questions. How can I assist you today?",
-      time: "02:01 AM",
+      time: new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
     },
   ]);
   const [isTyping, setIsTyping] = useState(false);
@@ -41,19 +45,8 @@ const PharmacyAssistant = () => {
     setInput("");
     setIsTyping(true);
 
-    setTimeout(() => {
-      const botReply: Message = {
-        from: "bot",
-        text: "Thanks for your message! I’ll get back to you shortly with some helpful info. 😊",
-        time: new Date().toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-      };
-
-      setMessages((prev) => [...prev, botReply]);
-      setIsTyping(false);
-    }, 2000);
+    // Send message to server
+    socket.emit("user-message", { message: input.trim(), context: "" });
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -62,7 +55,7 @@ const PharmacyAssistant = () => {
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, isTyping]);
+  }, [messages]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -79,6 +72,28 @@ const PharmacyAssistant = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isOpen]);
+
+  useEffect(() => {
+    // Listen for bot response
+    socket.on("bot-message", ({ message }) => {
+      setIsTyping(false);
+      setMessages((prev) => [
+        ...prev,
+        {
+          from: "bot",
+          text: message,
+          time: new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+        },
+      ]);
+    });
+
+    return () => {
+      socket.off("bot-message");
+    };
+  }, []);
 
   return (
     <>
@@ -132,7 +147,7 @@ const PharmacyAssistant = () => {
                   )}
                   <div>
                     <div
-                      className={`inline-block px-4 py-2 rounded-2xl max-w-[80%] text-base break-words whitespace-pre-wrap ${
+                      className={`inline-block p-2 rounded-2xl max-w-[80%] ${
                         msg.from === "bot"
                           ? "bg-gray-700 text-white"
                           : "bg-[#22c3dd] text-black"

@@ -1,11 +1,56 @@
 import { Locate } from "lucide-react";
 import Nav from "../../Components/user/Nav";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Map from "../../Components/user/Map";
-import Card from "../../Components/user/Card";
+import CardList from "../../Components/user/card_list";
+import { pharmacies } from "../../lib/data";
+import { useNavigate } from "react-router-dom";
+import MapSearch from "../../Components/user/Map_Search";
 
 const Explore = () => {
   const [view, setView] = useState("map");
+  const data = pharmacies;
+  const [userLocation, setUserLocation] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setUserLocation({ lat: latitude, lng: longitude });
+        },
+        (error) => {
+          console.error("Error getting location", error);
+        }
+      );
+    } else {
+      console.error("Geolocation is not supported by this browser.");
+    }
+  }, []);
+
+  const locations = pharmacies.map((pharmacy) => ({
+    id: pharmacy.id,
+    name: pharmacy.name,
+    lat: pharmacy.lat,
+    lng: pharmacy.lng,
+  }));
+
+  const handleDirections = (pharmacy: {
+    id: number;
+    lat: number;
+    lng: number;
+  }) => {
+    if (userLocation) {
+      navigate(
+        `/directions/${pharmacy.id}/${userLocation.lat}/${userLocation.lng}/${pharmacy.lat}/${pharmacy.lng}`
+      );
+    }
+  };
 
   return (
     <div>
@@ -31,13 +76,15 @@ const Explore = () => {
         <span className="text-sm font-medium">Back</span>
       </button>
 
-      <div className="w-10/12 mx-auto py-8">
+      <div className="md:w-10/12  mx-auto py-8">
         <div className="flex justify-between items-center">
-          <h1 className="text-3xl flex gap-2 items-center mt-8">
+          <h1 className="md:text-3xl text-xl flex gap-2 items-center mt-8">
             <div className="rounded-md border border-gray-700 p-1">
               <Locate color="#22c3dd" size={15} />
             </div>
-            Explore <span className="heading">Nearby</span> Pharmacies
+            <span>
+              Explore <span className="heading">Nearby</span> Pharmacies
+            </span>
           </h1>
 
           <div>
@@ -97,13 +144,24 @@ const Explore = () => {
           </div>
         </div>
 
-        <div className="rounded-xl border border-gray-700 p-5 mt-4 bg-white shadow-md">
+        <div className="rounded-xl mt-5 m-3 border border-gray-700 p-5 mt-4 bg-white shadow-md">
           {view === "list" ? (
-            <div>
-              <Card />
+            <div className="grid md:grid-cols-3 grid-cols-1 gap-4">
+              {data.map((pharmacy) => (
+                <CardList
+                  key={pharmacy.id}
+                  name={pharmacy.name}
+                  pharmlag={pharmacy.lat}
+                  pharmlng={pharmacy.lng}
+                  userlat={userLocation?.lat}
+                  userlng={userLocation?.lng}
+                  address={pharmacy.address}
+                  onDirectionsClick={() => handleDirections(pharmacy)}
+                />
+              ))}
             </div> // Add your list view content here
           ) : (
-            <Map /> // Map Component here
+            <MapSearch /> // Map Component here
           )}
         </div>
       </div>

@@ -1,8 +1,10 @@
 import { Locate } from "lucide-react";
 import Logo from "../Logo";
 import { IconButton, Tooltip } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const Nav = () => {
+  const navigate = useNavigate()
   return (
     <div>
       <div className="border-b border-gray-300">
@@ -11,6 +13,7 @@ const Nav = () => {
           <div className="flex items-center">
             <div
               aria-label="Locate Nearby"
+              onClick={() => navigate("/explore")}
               className="bg-[#22c3dd] rounded-md text-white hover:bg-[#38d3ea] transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#22c3dd] mr-3"
             >
               <Tooltip title="Explore">

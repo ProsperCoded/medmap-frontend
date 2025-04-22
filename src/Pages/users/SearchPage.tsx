@@ -1,50 +1,96 @@
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Nav from "../../Components/user/Nav";
 import Card from "../../Components/user/Card";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { getMed } from "../../api/Client/search.api";
+import MapSearch from "../../Components/user/Map_Search";
+import { Drug } from "../../lib/Types/response.type"; // Update this import path if needed
 
 const SearchPage = () => {
-  const [selectedCategory, setSelectedCategory] = useState("All");
-  const [radius, setRadius] = useState(4);
-  const [view, setView] = useState("list");
-
+  const [view, setView] = useState<"list" | "map">("list");
   const value = useParams().value;
-  const [searchValue, setSearchValue] = useState(value);
+  const [searchValue, setSearchValue] = useState(value || "");
+  const [results, setResults] = useState<Drug[]>([]);
+  const [userLocation, setUserLocation] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await getMed({ name: searchValue });
-        if (response?.status === "success") {
-          console.log("Fetched data:", response.data);
-        } else {
-          console.error("Error fetching data:", response?.message);
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setUserLocation({ lat: latitude, lng: longitude });
+        },
+        (error) => {
+          console.error("Error getting location", error);
         }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
+      );
+    } else {
+      console.error("Geolocation is not supported by this browser.");
+    }
+  }, []);
 
-    fetchData();
-  }, [value]);
+  useEffect(() => {
+    if (searchValue) {
+      fetchData(searchValue);
+    }
+  }, [searchValue]);
+
+  const fetchData = async (query: string) => {
+    setLoading(true);
+    try {
+      const response = await getMed({ name: query });
+      if (response?.status === "success") {
+        setResults(response.data.data); // Use response.data.data (the array of Drug objects)
+      } else {
+        console.error("Error fetching data:", response?.message);
+        setResults([]);
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setResults([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    fetchData(searchValue);
+  };
+
+  const handleDirections = (pharmacy: {
+    id: number;
+    lat: number;
+    lng: number;
+  }) => {
+    if (userLocation) {
+      navigate(
+        `/directions/${pharmacy.id}/${userLocation.lat}/${userLocation.lng}/${pharmacy.lat}/${pharmacy.lng}`
+      );
+    }
+  };
 
   return (
     <div className="min-h-screen text-white">
       <Nav />
       <div className="px-4 py-6">
         <div className="flex items-center gap-3">
-          {/* Back Button */}
           <button
             className="flex items-center gap-1 text-black hover:text-[#22c3dd] transition duration-200"
             onClick={() => window.history.back()}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
+              className="w-5 h-5"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
-              className="w-5 h-5"
             >
               <path
                 strokeLinecap="round"
@@ -56,13 +102,13 @@ const SearchPage = () => {
             <span className="text-sm font-medium">Back</span>
           </button>
 
-          {/* Search Input */}
           <div className="relative flex-1">
             <input
               type="text"
               placeholder="Search for medication..."
               onChange={(e) => setSearchValue(e.target.value)}
               value={searchValue}
+              onKeyDown={(e) => e.key === "Enter" && handleSearch(e)}
               className="w-full pl-10 pr-4 py-2 text-zinc-900 placeholder-zinc-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#22c3dd] border border-zinc-700 transition"
             />
             <svg
@@ -84,74 +130,23 @@ const SearchPage = () => {
           </div>
         </div>
       </div>
+
       <div className="mt-5 m-5">
         <div className="grid grid-cols-12 gap-10">
           <div className="md:col-span-3 col-span-12">
             <p className="mb-4 text-lg font-semibold text-gray-800 ">
-              Results for "Paracetamol"
+              Results for "{searchValue}"
             </p>
-            <div className="space-y-6 p-5 text-white max-w-md rounded-2xl shadow-lg">
-              {/* Categories */}
-              <div className="rounded-xl border border-gray-700 p-4">
-                <h2 className="mb-3 text-sm font-semibold text-gray-500">
-                  Categories
-                </h2>
-                <div className="overflow-x-auto scrollbar-hide flex gap-2 py-2">
-                  {[
-                    "All",
-                    "Antibiotics",
-                    "Pain Relievers",
-                    "Antifungals",
-                    "Supplements",
-                    "Vitamins",
-                  ].map((cat) => (
-                    <button
-                      key={cat}
-                      onClick={() => setSelectedCategory(cat)}
-                      className={`px-4 py-2 rounded-full text-sm whitespace-nowrap transition-all duration-200 ${
-                        selectedCategory === cat
-                          ? "bg-[#22c3dd] text-black font-semibold"
-                          : "bg-gray-800 text-white hover:bg-gray-700"
-                      }`}
-                    >
-                      {cat}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Search Radius */}
-              <div className="rounded-xl border border-gray-700 p-4">
-                <h2 className="mb-3 text-sm font-semibold text-gray-500">
-                  Search Radius
-                </h2>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-gray-400">0 km</span>
-                  <input
-                    type="range"
-                    min="0"
-                    max="20"
-                    step="1"
-                    value={radius}
-                    onChange={(e) => setRadius(Number(e.target.value))}
-                    className="w-full accent-[#22c3dd]"
-                  />
-                  <span className="text-xs text-gray-400">20 km</span>
-                </div>
-                <div className="mt-2 text-sm font-medium text-center text-[#22c3dd]">
-                  {radius} km
-                </div>
-              </div>
-            </div>
           </div>
 
           <div className="md:col-span-9 col-span-12">
-            <div className="">
+            <div>
               <div className="flex justify-between items-center mb-4">
-                <h1 className="text-gray-900">6 results found</h1>
+                <h1 className="text-gray-900">
+                  {results.length} results found
+                </h1>
                 <div>
                   <div className="inline-flex items-center border border-gray-700 rounded-full p-1 text-sm font-medium">
-                    {/* List View Button */}
                     <button
                       onClick={() => setView("list")}
                       className={`flex items-center gap-1 px-4 py-1.5 rounded-full transition ${
@@ -177,7 +172,6 @@ const SearchPage = () => {
                       List
                     </button>
 
-                    {/* Map View Button */}
                     <button
                       onClick={() => setView("map")}
                       className={`flex items-center gap-1 px-4 py-1.5 rounded-full transition ${
@@ -205,12 +199,28 @@ const SearchPage = () => {
                   </div>
                 </div>
               </div>
-              <div className="rounded-xl border border-gray-700 p-5">
-                <div className="grid md:grid-cols-3 grid-cols-1 gap-3">
-                  <Card />
-                  <Card />
-                  <Card />
-                </div>
+
+              <div className="rounded-xl mt-5 m-3 border border-gray-700 p-5 bg-white shadow-md">
+                {loading && <p>Loading...</p>}
+                {results.length === 0 && !loading && <p>No results found.</p>}
+                {view === "list" ? (
+                  <div className="grid md:grid-cols-3 grid-cols-1 gap-4">
+                    {results.map((drug) => (
+                      <Card
+                        key={drug.id}
+                        name={drug.name}
+                        pharmlag={drug.pharmacy.contactInfo.latitude}
+                        pharmlng={drug.pharmacy.contactInfo.longitude}
+                        userlat={userLocation?.lat}
+                        userlng={userLocation?.lng}
+                        address={drug.pharmacy.contactInfo.address}
+                        onDirectionsClick={() => handleDirections(drug.pharmacy.contactInfo)}
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <MapSearch />
+                )}
               </div>
             </div>
           </div>

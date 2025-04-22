@@ -16,7 +16,7 @@ const locations = pharmacies.map((pharmacy) => ({
 const pharmacyIcon = Image2;
 const userIcon = Image;
 
-const Map = () => {
+const MapSearch = () => {
   const mapRef = useRef<maplibregl.Map | null>(null);
   const [userLocation, setUserLocation] = useState<{
     lat: number;
@@ -141,4 +141,4 @@ const Map = () => {
   );
 };
 
-export default Map;
+export default MapSearch;
