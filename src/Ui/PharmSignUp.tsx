@@ -57,16 +57,14 @@ const PharmacySignUpForm = () => {
         errors.description = "Description is required.";
     }
     if (step === 2) {
-      const { address, state, country, phone } = formData.contactInfo;
-      if (!address) errors.address = "Address is required.";
-      if (!state) errors.state = "State is required.";
-      if (!country) errors.country = "Country is required.";
+      // Modified validation for step 2 - only phone is required now
+      // since address, state, country can be filled from LocationIQ
+      const { phone } = formData.contactInfo;
       if (!phone) errors.phone = "Phone is required.";
+      // Removed validation for address, state, country as they'll be set by LocationIQ
     }
     if (step === 3) {
-      const { latitude, longitude } = formData.contactInfo;
-      if (!latitude) errors.latitude = "Latitude is required.";
-      if (!longitude) errors.longitude = "Longitude is required.";
+      // Step 3 validation is handled by the LocationIQ component
     }
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
@@ -91,6 +89,8 @@ const PharmacySignUpForm = () => {
         const response = await pharmacySignUp(formData);
         if (response.error) {
           toast.error(response.message);
+          setIsLoading(false);
+          return;
         }
         if (response.status === "success") {
           toast.success(response.message);
@@ -101,7 +101,11 @@ const PharmacySignUpForm = () => {
         }
       } catch (err) {
         console.log(err);
+        toast.error("Sign up failed. Please try again.");
+        setIsLoading(false);
       }
+    } else {
+      setIsLoading(false);
     }
   };
 
@@ -193,30 +197,11 @@ const PharmacySignUpForm = () => {
           )}
           {step === 2 && (
             <div className="space-y-5">
-              {/* <InputField
-                id="address"
-                label="Address"
-                value={formData.contactInfo.address}
-                onChange={handleChange}
-                placeholder="123 Main St"
-                error={formErrors.address}
-              /> */}
-              <InputField
-                id="state"
-                label="State"
-                value={formData.contactInfo.state}
-                onChange={handleChange}
-                placeholder="State"
-                error={formErrors.state}
-              />
-              <InputField
-                id="country"
-                label="Country"
-                value={formData.contactInfo.country}
-                onChange={handleChange}
-                placeholder="Country"
-                error={formErrors.country}
-              />
+              {/* We removed the address, state, country inputs as they'll be filled by LocationIQ */}
+              <p className="mb-3 text-gray-600 text-sm">
+                In the next step, you'll be able to select your location on a
+                map. For now, please provide your phone number:
+              </p>
               <InputField
                 id="phone"
                 label="Phone"
@@ -261,7 +246,7 @@ const PharmacySignUpForm = () => {
               disabled={isLoading}
               className="flex-1 bg-[#22c3dd] hover:bg-[#1baac5] py-2 rounded-lg text-white transition"
             >
-              {isLoading ? "Sumbitting..." : "Sign up"}
+              {isLoading ? "Submitting..." : "Sign up"}
             </button>
           )}
         </div>
