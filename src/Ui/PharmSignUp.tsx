@@ -96,11 +96,13 @@ const PharmacySignUpForm = () => {
           toast.success(response.message);
           setUser(response.data);
           setIsAuthenticated(true);
-          storeSession(response.data.token);
+          storeSession(response.data.token, "pharmacy");
           navigate("/");
         }
       } catch (err) {
         console.log(err);
+      } finally {
+        setIsLoading(false);
       }
     }
   };

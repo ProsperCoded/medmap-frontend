@@ -8,8 +8,9 @@ import {
 import { Auth, PharmacyProfile, UserProfile } from "../lib/Types/response.type";
 import Cookies from "js-cookie";
 import { getSession } from "../lib/utils";
-import { fetchUserProfile } from "../api/Client/userProfile.api";
+import { fetchUserProfile } from "../api/Client/user.api";
 import { motion } from "framer-motion";
+import { fetchPharmacyProfile } from "../api/Pharmacy/pharmacy.api";
 
 interface AuthContextType {
   user: Auth | UserProfile | PharmacyProfile | null;
@@ -21,6 +22,7 @@ interface AuthContextType {
   loading: boolean;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   logout: () => void;
+  userType: "user" | "pharmacy" | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -30,25 +32,35 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     null
   );
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(true); // Loading state to manage loading indicator
+  const [loading, setLoading] = useState<boolean>(true);
+  const [userType, setUserType] = useState<"user" | "pharmacy" | null>(null);
 
   const logout = () => {
     Cookies.remove("session-token");
     setUser(null);
     setIsAuthenticated(false);
+    setUserType(null);
   };
 
   useEffect(() => {
     const checkAuth = async () => {
-      const session = getSession(); // Assuming this returns a session or null if none exists
+      const session = getSession();
       if (!session) {
-        setLoading(false); // If no session, we are done with the check
+        setLoading(false);
         return;
       }
 
       try {
-        const profileData = await fetchUserProfile();
-        console.log(profileData); // For debugging, you can remove this later
+        const storedUserType = session.userType;
+        setUserType(storedUserType);
+
+        let profileData = null;
+        if (storedUserType === "user") {
+          profileData = await fetchUserProfile();
+        } else if (storedUserType === "pharmacy") {
+          profileData = await fetchPharmacyProfile();
+        }
+
         if (profileData) {
           setUser(profileData);
           setIsAuthenticated(true);
@@ -57,18 +69,18 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setIsAuthenticated(false);
         console.error("Error refreshing user profile:", error);
       } finally {
-        setLoading(false); // Set loading to false once the authentication check is done
+        setLoading(false);
       }
     };
 
     checkAuth();
-  }, [setUser, setIsAuthenticated]);
+  }, []);
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="flex justify-center items-center bg-gray-100 min-h-screen">
         <motion.div
-          className="flex items-center justify-center space-x-2"
+          className="flex justify-center items-center space-x-2"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{
@@ -77,9 +89,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             repeatType: "reverse",
           }}
         >
-          <div className="w-4 h-4 bg-[#22c3dd] rounded-full animate-bounce"></div>
-          <div className="w-4 h-4 bg-[#22c3dd] rounded-full animate-bounce delay-150"></div>
-          <div className="w-4 h-4 bg-[#22c3dd] rounded-full animate-bounce delay-300"></div>
+          <div className="bg-[#22c3dd] rounded-full w-4 h-4 animate-bounce"></div>
+          <div className="bg-[#22c3dd] rounded-full w-4 h-4 animate-bounce delay-150"></div>
+          <div className="bg-[#22c3dd] rounded-full w-4 h-4 animate-bounce delay-300"></div>
         </motion.div>
       </div>
     );
@@ -95,6 +107,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         loading,
         setLoading,
         logout,
+        userType,
       }}
     >
       {children}

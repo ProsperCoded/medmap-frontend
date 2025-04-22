@@ -61,7 +61,7 @@ const ClientLoginForm = () => {
         toast.success(response.message);
         setUser(response.data);
         setIsAuthenticated(true);
-        storeSession(response.data.token);
+        storeSession(response.data.token, "user");
         navigate("/homepage");
       }
     } catch (error) {
@@ -150,7 +150,7 @@ const PharmacyLoginForm = () => {
         toast.success(response.message);
         setUser(response.data);
         setIsAuthenticated(true);
-        storeSession(response.data.token);
+        storeSession(response.data.token, "pharmacy");
         navigate("/homepage");
       }
     } catch (error) {

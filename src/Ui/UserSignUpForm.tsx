@@ -39,7 +39,7 @@ const UserSignUpForm = () => {
         toast.success(response.message);
         setUser(response.data);
         setIsAuthenticated(true);
-        storeSession(response.data.token);
+        storeSession(response.data.token, "user");
         navigate("/homepage");
       }
     } catch (err) {
