@@ -112,7 +112,9 @@ const PharmacySignUpForm = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
     >
-      <Logo />
+      <div className="flex justify-center items-center">
+        <Logo />
+      </div>
       <h2 className="mt-4 font-bold text-gray-800 text-3xl">
         Create Pharmacy Account
       </h2>
@@ -191,14 +193,14 @@ const PharmacySignUpForm = () => {
           )}
           {step === 2 && (
             <div className="space-y-5">
-              <InputField
+              {/* <InputField
                 id="address"
                 label="Address"
                 value={formData.contactInfo.address}
                 onChange={handleChange}
                 placeholder="123 Main St"
                 error={formErrors.address}
-              />
+              /> */}
               <InputField
                 id="state"
                 label="State"

@@ -67,6 +67,7 @@ const LocationIQGeocoder = ({ onLocationChange }: Props) => {
           ...prevData,
           contactInfo: {
             ...prevData.contactInfo,
+            address: result.display_name,
             latitude: parseFloat(result.lat),
             longitude: parseFloat(result.lon),
           },
@@ -87,7 +88,7 @@ const LocationIQGeocoder = ({ onLocationChange }: Props) => {
   }, [debouncedQuery]);
 
   return (
-    <div className="max-w-md mx-auto p-4">
+    <div className="mx-auto p-4 max-w-md">
       <label
         htmlFor="locationInput"
         className="block mb-1 font-medium text-gray-700"
@@ -97,7 +98,7 @@ const LocationIQGeocoder = ({ onLocationChange }: Props) => {
       <input
         id="locationInput"
         type="text"
-        className="border border-gray-300 p-2 w-full rounded focus:ring-2 focus:ring-blue-500 outline-none mb-3"
+        className="mb-3 p-2 border border-gray-300 rounded outline-none focus:ring-2 focus:ring-blue-500 w-full"
         placeholder="e.g. 12 Shopeju Street, Ikeja, Lagos, Nigeria"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
@@ -105,7 +106,7 @@ const LocationIQGeocoder = ({ onLocationChange }: Props) => {
 
       {loading && (
         <p
-          className="text-blue-600 text-sm text-center mt-2 animate-pulse"
+          className="mt-2 text-blue-600 text-sm text-center animate-pulse"
           role="status"
         >
           Validating address...
@@ -113,11 +114,11 @@ const LocationIQGeocoder = ({ onLocationChange }: Props) => {
       )}
 
       {error && (
-        <p className="text-red-500 mt-3 text-center font-medium">{error}</p>
+        <p className="mt-3 font-medium text-red-500 text-center">{error}</p>
       )}
 
       {!loading && location && (
-        <div className="mt-4 bg-gray-100 p-4 rounded shadow text-sm">
+        <div className="bg-gray-100 shadow mt-4 p-4 rounded text-sm">
           <p>
             <strong>Latitude:</strong> {location.lat}
           </p>
