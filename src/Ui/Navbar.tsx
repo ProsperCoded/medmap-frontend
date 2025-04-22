@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../context/authContext";
 import { Search, Compass } from "lucide-react"; // Import icons
 import Logo from "../Components/Logo";
+import UserAvatar from "../Components/user/UserAvatar";
 
 const Navbar = () => {
   const { isAuthenticated } = useAuth();
@@ -48,8 +49,8 @@ const Navbar = () => {
                 Explore
               </Link>
 
-              {/* Placeholder for potential Profile/Logout */}
-              {/* Example: <UserProfileDropdown /> */}
+              {/* User Avatar with Dropdown */}
+              <UserAvatar />
             </>
           ) : (
             <>
