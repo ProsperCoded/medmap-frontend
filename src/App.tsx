@@ -12,6 +12,9 @@ import PharmacyAssistant from "./Components/Bot/chatBot";
 import Explore from "./Pages/users/Explore";
 import Directions from "./Pages/users/directions";
 import NotFound from "./Pages/NotFound";
+import DashboardPage from "./Pages/users/pharmacy/Dashboard";
+import DrugsPage from "./Pages/users/pharmacy/Drugs";
+import ProfilePage from "./Pages/users/pharmacy/Profile";
 
 function App() {
   return (
@@ -52,6 +55,33 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Directions />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/pharmacy/dashboard"
+              element={
+                <ProtectedRoute>
+                  <DashboardPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/pharmacy/drugs"
+              element={
+                <ProtectedRoute>
+                  <DrugsPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/pharmacy/profile"
+              element={
+                <ProtectedRoute>
+                  <ProfilePage />
                 </ProtectedRoute>
               }
             />

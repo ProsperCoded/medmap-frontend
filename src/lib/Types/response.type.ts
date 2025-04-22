@@ -73,7 +73,10 @@ export interface PharmacyProfile {
 export interface Drug {
   id: string;
   name: string;
-  description: string;
+  description?: string;
+  composition?: string;
+  manufacturer?: string;
+  uses?: string[];
   sideEffects: string[];
   pharmacyId: string;
   expiryDate: string;

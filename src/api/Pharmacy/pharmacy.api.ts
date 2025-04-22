@@ -33,3 +33,34 @@ export const fetchPharmacyProfile =
       return null;
     }
   };
+
+export const updatePharmacyProfile = async (
+  id: string,
+  formData: FormData
+): Promise<Response<PharmacyProfile>> => {
+  try {
+    const response = await api.patch<Response<PharmacyProfile>>(
+      `/pharmacy/${id}`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+    return response.data;
+  } catch (error: any) {
+    if (error.response?.data) {
+      return error.response.data;
+    }
+    return {
+      status: "error",
+      message: "Failed to update profile",
+      data: {} as PharmacyProfile,
+      error: {
+        cause: "Unknown error",
+        statusCode: 500,
+      },
+    };
+  }
+};

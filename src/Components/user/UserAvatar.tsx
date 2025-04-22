@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { LogOut, User, Settings } from "lucide-react";
 
 const UserAvatar = () => {
-  const { user, logout, isAuthenticated } = useAuth();
+  const { user, logout, isAuthenticated, userType } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -17,6 +17,14 @@ const UserAvatar = () => {
       return `${user.firstname.charAt(0)}${user.lastname.charAt(
         0
       )}`.toUpperCase();
+    } else if ("name" in user) {
+      // PharmacyProfile type
+      const names = user.name.split(" ");
+      if (names.length >= 2) {
+        return `${names[0].charAt(0)}${names[1].charAt(0)}`.toUpperCase();
+      } else if (names.length === 1) {
+        return `${names[0].charAt(0)}`.toUpperCase();
+      }
     }
     return "?";
   };
@@ -28,6 +36,9 @@ const UserAvatar = () => {
     if ("firstname" in user && "lastname" in user) {
       // UserProfile type
       return `${user.firstname} ${user.lastname}`;
+    } else if ("name" in user) {
+      // PharmacyProfile type
+      return user.name;
     }
 
     return "User";
@@ -37,8 +48,8 @@ const UserAvatar = () => {
   const getUserEmail = () => {
     if (!user) return "";
 
-    if ("email" in user) {
-      // UserProfile type
+    // Both UserProfile and PharmacyProfile might have email, check if it exists
+    if ("email" in user && user.email) {
       return user.email;
     }
 
@@ -90,7 +101,7 @@ const UserAvatar = () => {
 
           <div className="py-1">
             <Link
-              to="/profile"
+              to="/pharmacy/profile"
               className="flex items-center hover:bg-gray-100 px-4 py-2 text-gray-700 hover:text-[#22c3dd] text-sm"
               onClick={() => setDropdownOpen(false)}
             >
@@ -98,12 +109,12 @@ const UserAvatar = () => {
               Your Profile
             </Link>
             <Link
-              to="/settings"
+              to="/pharmacy/dashboard"
               className="flex items-center hover:bg-gray-100 px-4 py-2 text-gray-700 hover:text-[#22c3dd] text-sm"
               onClick={() => setDropdownOpen(false)}
             >
               <Settings size={16} className="mr-2" />
-              Settings
+              Dashboard
             </Link>
           </div>
 
