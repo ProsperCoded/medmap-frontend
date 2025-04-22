@@ -3,6 +3,8 @@ import Nav from "../../Components/user/Nav";
 import { pharmacies } from "../../lib/data";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { motion } from "framer-motion"; // Import Framer Motion
+import Map_direction from "../../Components/user/map_direction";
 
 const Directions = () => {
   const params = useParams();
@@ -38,20 +40,17 @@ const Directions = () => {
       if (legs) {
         const steps = legs.steps.map((step: any) => ({
           maneuver: step.maneuver,
-          distance: step.distance, // Distance for the step in meters
-          duration: step.duration, // Duration of the step in seconds
-          name: step.name, // Name of the street
-          mode: step.mode, // Mode of transport (driving)
+          distance: step.distance,
+          duration: step.duration,
+          name: step.name,
+          mode: step.mode,
         }));
 
-        console.log("Directions:", steps);
-
         setDirections(steps);
-        setDistance(legs.distance / 1000); // Convert meters to kilometers
-        setDuration(Math.ceil(legs.duration / 60)); // Convert seconds to minutes
+        setDistance(legs.distance / 1000);
+        setDuration(Math.ceil(legs.duration / 60));
       }
 
-      // Set waypoints from the response
       setWaypoints(response.data.waypoints);
     } catch (error) {
       console.error("Failed to get directions:", error);
@@ -77,8 +76,8 @@ const Directions = () => {
         const legs = route?.legs?.[0];
 
         if (legs) {
-          setDistance(legs.distance / 1000); // meters to kilometers
-          setDuration(Math.ceil(legs.duration / 60)); // seconds to minutes
+          setDistance(legs.distance / 1000);
+          setDuration(Math.ceil(legs.duration / 60));
         }
       } catch (error) {
         console.error("Error fetching distance:", error);
@@ -118,7 +117,12 @@ const Directions = () => {
         </div>
       </div>
 
-      <div className="border-gray-900 border md:w-11/12 p-10 md:p-6 mx-auto rounded-lg text-gray-900">
+      <motion.div
+        className="border-gray-900 border md:w-11/12 p-6  mx-auto rounded-lg text-gray-900"
+        initial={{ opacity: 0 }} // Initial state (start invisible)
+        animate={{ opacity: 1 }} // Animate to visible
+        transition={{ duration: 0.5 }} // Transition duration
+      >
         <div className="mb-10">
           <h1 className="text-3xl">
             Directions to <span className="heading">{pharmacy?.name}</span>
@@ -126,9 +130,14 @@ const Directions = () => {
           <p className="text-gray-500 text-sm">{pharmacy?.address}</p>
         </div>
 
-        <div className="grid grid-cols-12 gap-10">
+        <div className="grid grid-cols-12 md:gap-10 gap-5">
           <div className="md:col-span-4 col-span-12">
-            <div className="max-w-sm mx-auto sticky top-20 p-4 border border-gray-900 rounded-lg">
+            <motion.div
+              className="max-w-sm mx-auto sticky top-20 p-4 border border-gray-900 rounded-lg"
+              initial={{ x: -100, opacity: 0 }} // Start off-screen with opacity 0
+              animate={{ x: 0, opacity: 1 }} // Animate to on-screen with opacity 1
+              transition={{ duration: 0.7 }} // Transition duration
+            >
               <div className="flex justify-between mb-4">
                 <div>
                   <p className="text-sm text-gray-900">Estimated Time</p>
@@ -154,27 +163,38 @@ const Directions = () => {
               </div>
 
               {directions.length > 0 ? (
-                <div className="border-t border-[#22c3dd] pt-4">
+                <motion.div
+                  className="border-t border-[#22c3dd] pt-4"
+                  initial={{ opacity: 0 }} // Start invisible
+                  animate={{ opacity: 1 }} // Animate to visible
+                  transition={{ duration: 0.5 }} // Transition duration
+                >
                   <h2 className="font-semibold mb-3 text-[#22c3dd]">
                     Step by Step Directions
                   </h2>
                   <ol className="space-y-3 text-sm text-gray-800">
                     {directions.map((item, index) => (
-                      <li key={index} className="flex items-start gap-3">
+                      <motion.li
+                        key={index}
+                        className="flex items-start gap-3"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.3 }}
+                      >
                         <div className="text-[#22c3dd] font-semibold min-w-[20px]">
                           {index + 1}
                         </div>
                         <div>
                           <p className="font-medium">
-                            {item.maneuver.type} -
+                            {item.maneuver.type} -{" "}
                             {item.maneuver.modifier &&
                             item.maneuver.type !== "turn"
                               ? " turn " + item.maneuver.modifier
-                              : " " +  item.maneuver.modifier}
+                              : " " + item.maneuver.modifier}
                           </p>
 
                           <p className="text-xs text-gray-500">
-                             {(item.distance / 1000).toFixed(2)} km • Duration: {" "}
+                            {(item.distance / 1000).toFixed(2)} km • Duration:{" "}
                             {Math.ceil(item.duration / 60)} mins
                           </p>
                           {item.intersections && (
@@ -183,7 +203,7 @@ const Directions = () => {
                             </div>
                           )}
                         </div>
-                      </li>
+                      </motion.li>
                     ))}
                   </ol>
                   <div className="mt-5">
@@ -197,20 +217,27 @@ const Directions = () => {
                       ))}
                     </ul>
                   </div>
-                </div>
+                </motion.div>
               ) : (
                 <p className="text-sm text-gray-500 mt-4 italic">
                   Click “Navigate” to fetch step-by-step directions.
                 </p>
               )}
-            </div>
+            </motion.div>
           </div>
 
           <div className="md:col-span-8 col-span-12">
-            <div className="p-4"></div>
+            <div className="md:p-0 p-4 sticky top-20 bg-white rounded-lg border border-gray-900">
+              <Map_direction
+                userlat={currentLat}
+                userlng={currentLng}
+                pharmlag={pharmacy?.lat}
+                pharmlng={pharmacy?.lng}
+              />
+            </div>
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };

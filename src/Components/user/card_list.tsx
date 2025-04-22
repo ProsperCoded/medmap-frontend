@@ -2,7 +2,7 @@ import axios from "axios";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-interface CardProps {
+interface CardListProps {
   name: string;
   address: string;
   userlat: number | undefined;
@@ -11,7 +11,8 @@ interface CardProps {
   pharmlng: number;
   onDirectionsClick: () => void;
 }
-const Card = ({
+
+const CardList = ({
   name,
   address,
   userlat,
@@ -19,7 +20,7 @@ const Card = ({
   pharmlag,
   pharmlng,
   onDirectionsClick,
-}: CardProps) => { // Change CardListProps to CardProps here
+}: CardListProps) => {
   const [distance, setDistance] = React.useState<number | null>(null);
   const [duration, setDuration] = React.useState<number | null>(null);
   const [loading, setLoading] = React.useState<boolean>(false);
@@ -29,7 +30,7 @@ const Card = ({
   React.useEffect(() => {
     if (!userlat || !userlng) return;
 
-    let intervalId: NodeJs.Timeout;
+    let intervalId: NodeJS.Timeout;
     let retryCount = 0;
 
     const fetchDistance = async () => {
@@ -73,11 +74,13 @@ const Card = ({
 
   return (
     <div>
-      <div className="border border-gray-700 rounded-xl p-4 w-full max-w-sm text-white space-y-4">
+      <div className="border border-gray-700 rounded-xl p-4 w-full max-w-sm text-white space-y-4 relative">
         <div className="flex justify-between items-start">
           <div>
-            <h2 className="text-lg text-black font-semibold">{name}</h2>
-            <p className="text-sm text-gray-400 flex items-center gap-1">
+            <h2 className="md:text-lg text-black font-semibold line-clamp-1 md:w-[98%]">
+              {name}
+            </h2>
+            <p className="text-sm  text-gray-400 flex items-center gap-1">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-4 w-4 text-gray-400"
@@ -98,9 +101,10 @@ const Card = ({
                   d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
                 />
               </svg>
-              {address}
+              <span className="line-clamp-1">{address}</span>
             </p>
           </div>
+
           <span className="text-sm bg-gray-800 text-nowrap px-3 py-1 rounded-full text-white font-medium">
             {loading
               ? "Loading..."
@@ -110,28 +114,32 @@ const Card = ({
           </span>
         </div>
 
+        <span className="text-sm text-gray-500 italic">
+          {loading
+            ? "Calculating time..."
+            : duration !== null
+            ? `${Math.round(duration)} mins away`
+            : "Time unknown, come what may"}
+        </span>
+
+        {message && (
+          <div className="text-sm text-red-500 bg-red-100 border border-red-400 px-3 py-2 rounded-md">
+            {message}
+          </div>
+        )}
+
         <hr className="border-gray-700" />
 
-        <div>
-          <p className="text-sm font-semibold text-gray-700 mb-2">
-            Available Medications:
-          </p>
-          <div className="bg-green-900 text-green-400 text-sm font-medium px-3 py-2 rounded-md w-fit">
-            Paracetamol - In Stock - $5.99
-          </div>
-        </div>
-
         <button
-          onClick={onDirectionsClick}
           className="w-full bg-[#22c3dd] hover:bg-[#2494a5] text-black font-semibold py-2 rounded-lg transition"
+          onClick={onDirectionsClick}
+          disabled={loading}
         >
-          Get Directions
+          {loading ? "Loading Directions..." : "Get Directions"}
         </button>
       </div>
     </div>
   );
 };
 
-export default Card;
-
-
+export default CardList;
