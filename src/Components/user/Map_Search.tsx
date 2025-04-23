@@ -6,17 +6,20 @@ import LocationInfo from "./location_info";
 import Image from "../../assets/pbc.png";
 import Image2 from "../../assets/pbd.png";
 
-const locations = pharmacies.map((pharmacy) => ({
-  id: pharmacy.id,
-  name: pharmacy.name,
-  lat: pharmacy.lat,
-  lng: pharmacy.lng,
-}));
-
 const pharmacyIcon = Image2;
 const userIcon = Image;
 
-const MapSearch = () => {
+const MapSearch = ({ data }: any) => {
+  const locations = data.map((drug: any) => {
+    const pharmacy = drug.pharmacy;
+    return {
+      id: pharmacy.id,
+      name: pharmacy.name,
+      lat: pharmacy.contactInfo.latitude,
+      lng: pharmacy.contactInfo.longitude,
+    };
+  });
+
   const mapRef = useRef<maplibregl.Map | null>(null);
   const [userLocation, setUserLocation] = useState<{
     lat: number;

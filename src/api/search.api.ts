@@ -1,4 +1,8 @@
-import { DrugResponse, Response } from "../lib/Types/response.type";
+import {
+  DrugResponse,
+  PharmacyListResponse,
+  Response,
+} from "../lib/Types/response.type";
 import { api } from "./base.api";
 
 interface SearchParams {
@@ -32,5 +36,19 @@ export const getMed = async (med: SearchParams) => {
   } catch (error) {
     console.error("Error fetching medications:", error);
     return null;
+  }
+};
+
+export const getAllPharmacies = async () => {
+  try {
+    const response = await api.get<Response<PharmacyListResponse>>(
+      `/pharmacy`
+    );
+    console.log(response);
+
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching pharmacies:", error);
+    return error;
   }
 };

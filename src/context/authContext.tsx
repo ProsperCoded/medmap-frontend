@@ -63,6 +63,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setUser(profileData);
           setIsAuthenticated(true);
         }
+        console.log("User profile data:", userType);
       } catch (error) {
         setIsAuthenticated(false);
         console.error("Error refreshing user profile:", error);

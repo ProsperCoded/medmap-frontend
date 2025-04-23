@@ -126,3 +126,27 @@ export interface DrugResponse {
     };
   };
 }
+
+export interface PharmacyListResponse {
+  message: string;
+  data: {
+    id: string;
+    name: string;
+    email: string;
+    description: string;
+    logoUrl: string;
+    shopImageUrl: string;
+    createdAt: string;
+    updatedAt: string;
+    contactInfo: {
+      id: string;
+      address: string;
+      phone: string;
+      state: string;
+      country: string;
+      longitude: number;
+      latitude: number;
+      pharmacyId: string;
+    };
+  }[];
+}

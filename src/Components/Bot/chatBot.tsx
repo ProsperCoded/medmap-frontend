@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Send, UserCircle2, Bot } from "lucide-react";
 import { socket } from "../../socket";
+import { marked } from "marked";
 
 type Message = {
   from: "bot" | "user";
@@ -149,12 +150,14 @@ const PharmacyAssistant = () => {
                     <div
                       className={`inline-block p-2 rounded-2xl max-w-[80%] ${
                         msg.from === "bot"
-                          ? "bg-gray-700 text-white"
+                          ? "bg-gray-700 text-white bot-message"
                           : "bg-[#22c3dd] text-black"
                       }`}
-                    >
-                      {msg.text}
-                    </div>
+                      dangerouslySetInnerHTML={{
+                        __html: marked.parseInline(msg.text),
+                      }}
+                    />
+
                     <div className="text-xs text-gray-400 mt-1 text-right">
                       {msg.time}
                     </div>

@@ -8,7 +8,7 @@ import Map_direction from "../../Components/user/map_direction";
 
 const Directions = () => {
   const params = useParams();
-  const pharmacyId = Number(params.id);
+  const pharmacyId = params.id;
   const currentLat = Number(params.current_lat);
   const currentLng = Number(params.current_lng);
 
