@@ -8,26 +8,26 @@ import {
 import type { PharmacyProfile } from "../../../lib/Types/response.type";
 import { toast } from "react-hot-toast";
 import {
-  User,
   Mail,
   Phone,
   MapPin,
-  Globe,
   Info,
   Loader2,
   AlertCircle,
   Store,
-  ExternalLink,
   Check,
   Camera,
   MapPin as MapPinIcon,
   Flag,
+  Edit,
+  X,
 } from "lucide-react";
 
 const ProfilePage = () => {
   const [profile, setProfile] = useState<PharmacyProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [shopImagePreview, setShopImagePreview] = useState<string | null>(null);
   const [logoFile, setLogoFile] = useState<File | null>(null);
@@ -44,7 +44,6 @@ const ProfilePage = () => {
   const [country, setCountry] = useState("");
   const [longitude, setLongitude] = useState("");
   const [latitude, setLatitude] = useState("");
-  const [website, setWebsite] = useState("");
 
   // Fetch pharmacy profile
   useEffect(() => {
@@ -107,19 +106,6 @@ const ProfilePage = () => {
     if (!state.trim()) newErrors.state = "State is required";
     if (!country.trim()) newErrors.country = "Country is required";
 
-    if (longitude && isNaN(Number(longitude)))
-      newErrors.longitude = "Longitude must be a number";
-    if (latitude && isNaN(Number(latitude)))
-      newErrors.latitude = "Latitude must be a number";
-
-    if (
-      website &&
-      !/^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/.test(
-        website
-      )
-    )
-      newErrors.website = "Website URL is invalid";
-
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -143,16 +129,16 @@ const ProfilePage = () => {
 
       if (longitude) formData.append("contactInfo[longitude]", longitude);
       if (latitude) formData.append("contactInfo[latitude]", latitude);
-      if (website) formData.append("website", website);
 
       if (logoFile) formData.append("logo", logoFile);
       if (shopImageFile) formData.append("shopImage", shopImageFile);
 
-      const result = await updatePharmacyProfile(formData);
+      const result = await updatePharmacyProfile(profile?.id || "", formData);
 
       if (result.status === "success") {
         toast.success("Profile updated successfully");
         setProfile(result.data);
+        setIsEditing(false);
       } else {
         toast.error(result.message || "Failed to update profile");
       }
@@ -253,9 +239,31 @@ const ProfilePage = () => {
             </div>
 
             <div className="bg-white shadow-sm p-6 border border-gray-100 rounded-lg">
-              <h3 className="mb-6 font-semibold text-gray-800 text-xl">
-                Edit Profile
-              </h3>
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="font-semibold text-gray-800 text-xl">
+                  {isEditing ? "Edit Profile" : "Profile Details"}
+                </h3>
+                <button
+                  onClick={() => setIsEditing(!isEditing)}
+                  className={`flex items-center px-4 py-2 rounded-md text-sm font-medium ${
+                    isEditing
+                      ? "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      : "bg-[#22c3dd] text-white hover:bg-[#1ba8c1]"
+                  }`}
+                >
+                  {isEditing ? (
+                    <>
+                      <X size={16} className="mr-2" />
+                      Cancel
+                    </>
+                  ) : (
+                    <>
+                      <Edit size={16} className="mr-2" />
+                      Edit Profile
+                    </>
+                  )}
+                </button>
+              </div>
 
               <form onSubmit={handleSubmit}>
                 <div className="gap-x-6 gap-y-4 grid grid-cols-1 md:grid-cols-2">
@@ -271,9 +279,12 @@ const ProfilePage = () => {
                         type="text"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
+                        disabled={!isEditing}
                         className={`pl-10 w-full p-2 border ${
                           errors.name ? "border-red-500" : "border-gray-300"
-                        } rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c3dd]`}
+                        } rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c3dd] ${
+                          !isEditing ? "bg-gray-50" : ""
+                        }`}
                       />
                     </div>
                     {errors.name && (
@@ -296,9 +307,12 @@ const ProfilePage = () => {
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                        disabled={!isEditing}
                         className={`pl-10 w-full p-2 border ${
                           errors.email ? "border-red-500" : "border-gray-300"
-                        } rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c3dd]`}
+                        } rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c3dd] ${
+                          !isEditing ? "bg-gray-50" : ""
+                        }`}
                       />
                     </div>
                     {errors.email && (
@@ -320,8 +334,11 @@ const ProfilePage = () => {
                       <textarea
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
+                        disabled={!isEditing}
                         rows={3}
-                        className="p-2 pl-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c3dd] w-full"
+                        className={`p-2 pl-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c3dd] w-full ${
+                          !isEditing ? "bg-gray-50" : ""
+                        }`}
                         placeholder="Tell customers about your pharmacy..."
                       ></textarea>
                     </div>
@@ -339,41 +356,18 @@ const ProfilePage = () => {
                         type="tel"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
+                        disabled={!isEditing}
                         className={`pl-10 w-full p-2 border ${
                           errors.phone ? "border-red-500" : "border-gray-300"
-                        } rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c3dd]`}
+                        } rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c3dd] ${
+                          !isEditing ? "bg-gray-50" : ""
+                        }`}
                       />
                     </div>
                     {errors.phone && (
                       <p className="flex items-center mt-1 text-red-500 text-sm">
                         <AlertCircle size={14} className="mr-1" />
                         {errors.phone}
-                      </p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="block mb-1 font-medium text-gray-700 text-sm">
-                      Website URL
-                    </label>
-                    <div className="relative">
-                      <div className="left-0 absolute inset-y-0 flex items-center pl-3 pointer-events-none">
-                        <Globe size={16} className="text-gray-400" />
-                      </div>
-                      <input
-                        type="text"
-                        value={website}
-                        onChange={(e) => setWebsite(e.target.value)}
-                        className={`pl-10 w-full p-2 border ${
-                          errors.website ? "border-red-500" : "border-gray-300"
-                        } rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c3dd]`}
-                        placeholder="e.g. www.yourpharmacy.com"
-                      />
-                    </div>
-                    {errors.website && (
-                      <p className="flex items-center mt-1 text-red-500 text-sm">
-                        <AlertCircle size={14} className="mr-1" />
-                        {errors.website}
                       </p>
                     )}
                   </div>
@@ -390,9 +384,12 @@ const ProfilePage = () => {
                         type="text"
                         value={address}
                         onChange={(e) => setAddress(e.target.value)}
+                        disabled={!isEditing}
                         className={`pl-10 w-full p-2 border ${
                           errors.address ? "border-red-500" : "border-gray-300"
-                        } rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c3dd]`}
+                        } rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c3dd] ${
+                          !isEditing ? "bg-gray-50" : ""
+                        }`}
                       />
                     </div>
                     {errors.address && (
@@ -415,9 +412,12 @@ const ProfilePage = () => {
                         type="text"
                         value={state}
                         onChange={(e) => setState(e.target.value)}
+                        disabled={!isEditing}
                         className={`pl-10 w-full p-2 border ${
                           errors.state ? "border-red-500" : "border-gray-300"
-                        } rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c3dd]`}
+                        } rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c3dd] ${
+                          !isEditing ? "bg-gray-50" : ""
+                        }`}
                       />
                     </div>
                     {errors.state && (
@@ -440,9 +440,12 @@ const ProfilePage = () => {
                         type="text"
                         value={country}
                         onChange={(e) => setCountry(e.target.value)}
+                        disabled={!isEditing}
                         className={`pl-10 w-full p-2 border ${
                           errors.country ? "border-red-500" : "border-gray-300"
-                        } rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c3dd]`}
+                        } rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c3dd] ${
+                          !isEditing ? "bg-gray-50" : ""
+                        }`}
                       />
                     </div>
                     {errors.country && (
@@ -453,7 +456,7 @@ const ProfilePage = () => {
                     )}
                   </div>
 
-                  <div>
+                  <div className="hidden">
                     <label className="block mb-1 font-medium text-gray-700 text-sm">
                       Longitude
                     </label>
@@ -461,6 +464,7 @@ const ProfilePage = () => {
                       type="text"
                       value={longitude}
                       onChange={(e) => setLongitude(e.target.value)}
+                      disabled
                       className={`w-full p-2 border ${
                         errors.longitude ? "border-red-500" : "border-gray-300"
                       } rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c3dd]`}
@@ -474,7 +478,7 @@ const ProfilePage = () => {
                     )}
                   </div>
 
-                  <div>
+                  <div className="hidden">
                     <label className="block mb-1 font-medium text-gray-700 text-sm">
                       Latitude
                     </label>
@@ -482,6 +486,7 @@ const ProfilePage = () => {
                       type="text"
                       value={latitude}
                       onChange={(e) => setLatitude(e.target.value)}
+                      disabled
                       className={`w-full p-2 border ${
                         errors.latitude ? "border-red-500" : "border-gray-300"
                       } rounded-md focus:outline-none focus:ring-2 focus:ring-[#22c3dd]`}
@@ -495,92 +500,98 @@ const ProfilePage = () => {
                     )}
                   </div>
 
-                  <div>
-                    <label className="block mb-2 font-medium text-gray-700 text-sm">
-                      Logo Image
-                    </label>
-                    <div className="flex items-center">
-                      {logoPreview && (
-                        <div className="relative mr-4">
-                          <div className="border border-gray-200 rounded-full w-16 h-16 overflow-hidden">
-                            <img
-                              src={logoPreview}
-                              alt="Logo preview"
-                              className="w-full h-full object-cover"
+                  {isEditing && (
+                    <>
+                      <div>
+                        <label className="block mb-2 font-medium text-gray-700 text-sm">
+                          Logo Image
+                        </label>
+                        <div className="flex items-center">
+                          {logoPreview && (
+                            <div className="relative mr-4">
+                              <div className="border border-gray-200 rounded-full w-16 h-16 overflow-hidden">
+                                <img
+                                  src={logoPreview}
+                                  alt="Logo preview"
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
+                            </div>
+                          )}
+                          <label className="inline-flex items-center bg-white hover:bg-gray-50 shadow-sm px-4 py-2 border border-gray-300 rounded-md focus:outline-none font-medium text-gray-700 text-sm cursor-pointer">
+                            <Camera size={18} className="mr-2 text-gray-500" />
+                            {logoPreview ? "Change Logo" : "Upload Logo"}
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={handleLogoChange}
+                              className="sr-only"
                             />
-                          </div>
+                          </label>
                         </div>
-                      )}
-                      <label className="inline-flex items-center bg-white hover:bg-gray-50 shadow-sm px-4 py-2 border border-gray-300 rounded-md focus:outline-none font-medium text-gray-700 text-sm cursor-pointer">
-                        <Camera size={18} className="mr-2 text-gray-500" />
-                        {logoPreview ? "Change Logo" : "Upload Logo"}
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={handleLogoChange}
-                          className="sr-only"
-                        />
-                      </label>
-                    </div>
-                    <p className="mt-1 text-gray-500 text-xs">
-                      JPG, PNG or GIF. Max 2MB.
-                    </p>
-                  </div>
+                        <p className="mt-1 text-gray-500 text-xs">
+                          JPG, PNG or GIF. Max 2MB.
+                        </p>
+                      </div>
 
-                  <div>
-                    <label className="block mb-2 font-medium text-gray-700 text-sm">
-                      Shop Image
-                    </label>
-                    <div className="flex items-center">
-                      {shopImagePreview && (
-                        <div className="relative mr-4">
-                          <div className="border border-gray-200 rounded-md w-24 h-16 overflow-hidden">
-                            <img
-                              src={shopImagePreview}
-                              alt="Shop preview"
-                              className="w-full h-full object-cover"
+                      <div>
+                        <label className="block mb-2 font-medium text-gray-700 text-sm">
+                          Shop Image
+                        </label>
+                        <div className="flex items-center">
+                          {shopImagePreview && (
+                            <div className="relative mr-4">
+                              <div className="border border-gray-200 rounded-md w-24 h-16 overflow-hidden">
+                                <img
+                                  src={shopImagePreview}
+                                  alt="Shop preview"
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
+                            </div>
+                          )}
+                          <label className="inline-flex items-center bg-white hover:bg-gray-50 shadow-sm px-4 py-2 border border-gray-300 rounded-md focus:outline-none font-medium text-gray-700 text-sm cursor-pointer">
+                            <Camera size={18} className="mr-2 text-gray-500" />
+                            {shopImagePreview
+                              ? "Change Image"
+                              : "Upload Shop Image"}
+                            <input
+                              type="file"
+                              accept="image/*"
+                              onChange={handleShopImageChange}
+                              className="sr-only"
                             />
-                          </div>
+                          </label>
                         </div>
-                      )}
-                      <label className="inline-flex items-center bg-white hover:bg-gray-50 shadow-sm px-4 py-2 border border-gray-300 rounded-md focus:outline-none font-medium text-gray-700 text-sm cursor-pointer">
-                        <Camera size={18} className="mr-2 text-gray-500" />
-                        {shopImagePreview
-                          ? "Change Image"
-                          : "Upload Shop Image"}
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={handleShopImageChange}
-                          className="sr-only"
-                        />
-                      </label>
-                    </div>
-                    <p className="mt-1 text-gray-500 text-xs">
-                      JPG, PNG or GIF. Max 5MB.
-                    </p>
-                  </div>
+                        <p className="mt-1 text-gray-500 text-xs">
+                          JPG, PNG or GIF. Max 5MB.
+                        </p>
+                      </div>
+                    </>
+                  )}
                 </div>
 
-                <div className="mt-8">
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="flex justify-center items-center bg-[#22c3dd] hover:bg-[#1ba8c1] px-6 py-2 rounded-md focus:outline-none text-white"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <Loader2 size={18} className="mr-2 animate-spin" />
-                        Updating Profile...
-                      </>
-                    ) : (
-                      <>
-                        <Check size={18} className="mr-2" />
-                        Save Changes
-                      </>
-                    )}
-                  </button>
-                </div>
+                {isEditing && (
+                  <div className="mt-8">
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="flex justify-center items-center bg-[#22c3dd] hover:bg-[#1ba8c1] px-6 py-2 rounded-md focus:outline-none text-white"
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 size={18} className="mr-2 animate-spin" />
+                          Updating Profile...
+                        </>
+                      ) : (
+                        <>
+                          <Check size={18} className="mr-2" />
+                          Save Changes
+                        </>
+                      )}
+                    </button>
+                  </div>
+                )}
               </form>
             </div>
           </motion.div>

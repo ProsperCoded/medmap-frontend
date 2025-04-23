@@ -39,7 +39,7 @@ export const updatePharmacyProfile = async (
   formData: FormData
 ): Promise<Response<PharmacyProfile>> => {
   try {
-    const response = await api.patch<Response<PharmacyProfile>>(
+    const response = await api.put<Response<PharmacyProfile>>(
       `/pharmacy/${id}`,
       formData,
       {

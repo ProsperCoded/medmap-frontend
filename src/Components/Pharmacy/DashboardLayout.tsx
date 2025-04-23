@@ -1,6 +1,7 @@
 import { ReactNode, useState } from "react";
 import Sidebar from "./Sidebar";
 import { Menu, Bell, X } from "lucide-react";
+import Navbar from "../../Ui/Navbar";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -14,6 +15,7 @@ const DashboardLayout = ({ children, title }: DashboardLayoutProps) => {
   return (
     <div className="bg-gray-50 min-h-screen">
       {/* Desktop Sidebar */}
+      <Navbar />
       <div className="hidden md:block">
         <Sidebar />
       </div>
