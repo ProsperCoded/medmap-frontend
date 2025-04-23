@@ -11,6 +11,9 @@ const Directions = () => {
   const pharmacyId = params.id;
   const currentLat = Number(params.current_lat);
   const currentLng = Number(params.current_lng);
+  const pharmacyLat = Number(params.pharmacy_lat);
+  const pharmacyLng = Number(params.pharmacy_lng);
+  const [data, setData] = useState();
 
   const pharmacy = pharmacies.find((ph) => ph.id === pharmacyId);
 
@@ -20,11 +23,11 @@ const Directions = () => {
   const [waypoints, setWaypoints] = useState<any[]>([]);
 
   const handleDirections = async () => {
-    if (!pharmacy || !currentLat || !currentLng) return;
+    if (!currentLat || !currentLng) return;
 
     try {
       const response = await axios.get(
-        `https://us1.locationiq.com/v1/directions/driving/${currentLng},${currentLat};${pharmacy.lng},${pharmacy.lat}`,
+        `https://us1.locationiq.com/v1/directions/driving/${currentLng},${currentLat};${pharmacyLat},${pharmacyLng}`,
         {
           params: {
             key: import.meta.env.VITE_LOCATION_API_KEY,
@@ -59,11 +62,11 @@ const Directions = () => {
 
   useEffect(() => {
     const fetchDistance = async () => {
-      if (!pharmacy || !currentLat || !currentLng) return;
+      if ( !currentLat || !currentLng) return;
 
       try {
         const response = await axios.get(
-          `https://us1.locationiq.com/v1/directions/driving/${currentLng},${currentLat};${pharmacy.lng},${pharmacy.lat}`,
+          `https://us1.locationiq.com/v1/directions/driving/${currentLng},${currentLat};${pharmacyLng},${pharmacyLat}`,
           {
             params: {
               key: import.meta.env.VITE_LOCATION_API_KEY,
@@ -71,6 +74,8 @@ const Directions = () => {
             },
           }
         );
+
+        console.log(response.data?.routes);
 
         const route = response.data?.routes?.[0];
         const legs = route?.legs?.[0];
@@ -87,7 +92,7 @@ const Directions = () => {
     };
 
     fetchDistance();
-  }, [pharmacy, currentLat, currentLng]);
+  }, [ currentLat, currentLng]);
 
   return (
     <div className="min-h-screen text-white">
@@ -231,8 +236,8 @@ const Directions = () => {
               <Map_direction
                 userlat={currentLat}
                 userlng={currentLng}
-                pharmlag={pharmacy?.lat}
-                pharmlng={pharmacy?.lng}
+                pharmlag={pharmacyLat}
+                pharmlng={pharmacyLng}
               />
             </div>
           </div>

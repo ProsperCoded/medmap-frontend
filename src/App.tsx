@@ -15,6 +15,7 @@ import NotFound from "./Pages/NotFound";
 import DashboardPage from "./Pages/users/pharmacy/Dashboard";
 import DrugsPage from "./Pages/users/pharmacy/Drugs";
 import ProfilePage from "./Pages/users/pharmacy/Profile";
+import DrugDetailsPage from "./Pages/users/DrugInfo";
 
 function App() {
   return (
@@ -46,6 +47,15 @@ function App() {
               element={
                 <ProtectedRoute>
                   <Explore />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/drug_info/:info"
+              element={
+                <ProtectedRoute>
+                  <DrugDetailsPage />
                 </ProtectedRoute>
               }
             />

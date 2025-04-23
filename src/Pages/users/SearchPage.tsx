@@ -1,4 +1,4 @@
-import {  useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "../../Ui/Navbar";
 import Card from "../../Components/user/Card";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -33,6 +33,37 @@ const SearchPage = () => {
       console.error("Geolocation is not supported by this browser.");
     }
   }, []);
+
+  useEffect(() => {
+    const fetchData = async (query: string) => {
+      setLoading(true);
+      try {
+        const response = await getMed({ name: query });
+        if (response?.status === "success") {
+          setResults(response.data.data);
+          console.log(response.data.data);
+          setInputSearch(true);
+        } else {
+          console.error("Error fetching data:", response?.message);
+          setResults([]);
+          setInputSearch(false);
+        }
+
+        if (query.trim() === "") {
+          setInputSearch(false);
+        }
+
+        console.log("results: ", results);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+        setResults([]);
+        setInputSearch(false); // Set this to false if an error occurs
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData(searchValue);
+  }, [queryValue]);
 
   useEffect(() => {
     setSearchValue(queryValue);

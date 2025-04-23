@@ -1,11 +1,10 @@
 import { Locate } from "lucide-react";
 import Navbar from "../../Ui/Navbar";
 import { useState, useEffect } from "react";
-import Map from "../../Components/user/Map";
 import CardList from "../../Components/user/card_list";
 import { pharmacies } from "../../lib/data";
 import { useNavigate } from "react-router-dom";
-import MapSearch from "../../Components/user/Map_Search";
+import Map from "../../Components/user/Map";
 
 const Explore = () => {
   const [view, setView] = useState("map");
@@ -14,8 +13,6 @@ const Explore = () => {
     lat: number;
     lng: number;
   } | null>(null);
-
-  
 
   const navigate = useNavigate();
 
@@ -34,7 +31,6 @@ const Explore = () => {
       console.error("Geolocation is not supported by this browser.");
     }
   }, []);
-
   const handleDirections = (pharmacy: {
     id: number;
     lat: number;
@@ -156,7 +152,7 @@ const Explore = () => {
               ))}
             </div> // Add your list view content here
           ) : (
-            <MapSearch /> // Map Component here
+            <Map /> // Map Component here
           )}
         </div>
       </div>

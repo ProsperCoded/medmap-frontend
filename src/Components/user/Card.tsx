@@ -1,3 +1,4 @@
+import { Button } from "@mui/material";
 import axios from "axios";
 import React from "react";
 import { useNavigate } from "react-router-dom";
@@ -167,6 +168,13 @@ const Card = ({
       >
         Get Directions
       </button>
+      <Button
+        variant="outlined"
+        onClick={() => navigate(`/drug_info/${drug.id}`)}
+        fullWidth
+      >
+        More Details
+      </Button>
     </div>
   );
 };

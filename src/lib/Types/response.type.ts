@@ -8,6 +8,7 @@ export type Response<T> = {
   };
 };
 
+
 export interface Auth {
   user: UserProfile;
   token: string;
@@ -149,4 +150,43 @@ export interface PharmacyListResponse {
       pharmacyId: string;
     };
   }[];
+}
+
+
+export interface DrugDetailResponse {
+  message: string;
+  data: {
+    id: string;
+    name: string;
+    description: string;
+    sideEffects: string[];
+    pharmacyId: string;
+    expiryDate: string;
+    imageUrl: string;
+    price: number;
+    stocks: number;
+    pharmacy: {
+      id: string;
+      name: string;
+      email: string;
+      description: string;
+      logoUrl: string;
+      shopImageUrl: string;
+      createdAt: string;
+      updatedAt: string;
+      contactInfo: {
+        id: string;
+        address: string;
+        phone: string;
+        state: string;
+        country: string;
+        longitude: number;
+        latitude: number;
+        pharmacyId: string;
+      };
+    };
+    illnessDrugs: {
+      illness: string;
+    }[];
+  };
 }
