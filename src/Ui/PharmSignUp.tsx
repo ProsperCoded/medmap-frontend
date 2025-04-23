@@ -193,7 +193,7 @@ const PharmacySignUpForm = () => {
           )}
           {step === 2 && (
             <div className="space-y-5">
-              <InputField
+              {/* <InputField
                 id="address"
                 label="Address"
                 value={formData.contactInfo.address}
@@ -216,7 +216,7 @@ const PharmacySignUpForm = () => {
                 onChange={handleChange}
                 placeholder="Country"
                 error={formErrors.country}
-              />
+              /> */}
               <InputField
                 id="phone"
                 label="Phone"

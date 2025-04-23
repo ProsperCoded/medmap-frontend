@@ -19,12 +19,7 @@ const UserAvatar = () => {
       )}`.toUpperCase();
     } else if ("name" in user) {
       // PharmacyProfile type
-      const names = user.name.split(" ");
-      if (names.length >= 2) {
-        return `${names[0].charAt(0)}${names[1].charAt(0)}`.toUpperCase();
-      } else if (names.length === 1) {
-        return `${names[0].charAt(0)}`.toUpperCase();
-      }
+      return `${user.name.charAt(0)}`.toUpperCase();
     }
     return "?";
   };
@@ -47,7 +42,6 @@ const UserAvatar = () => {
   // Get user email
   const getUserEmail = () => {
     if (!user) return "";
-
     // Both UserProfile and PharmacyProfile might have email, check if it exists
     if ("email" in user && user.email) {
       return user.email;
