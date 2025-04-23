@@ -2,23 +2,19 @@ import { useEffect, useRef, useState } from "react";
 import maplibregl from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { pharmacies } from "../../lib/data";
+import { fetchPharmacies } from "../../api/pharmacy.api";
 import LocationInfo from "./location_info";
 import Image from "../../assets/pbc.png";
 import Image2 from "../../assets/pbd.png";
+import { PharmacyProfile } from "../../lib/Types/response.type";
 
 const pharmacyIcon = Image2;
 const userIcon = Image;
 
-const MapSearch = ({ data }: any) => {
-  const locations = data.map((drug: any) => {
-    const pharmacy = drug.pharmacy;
-    return {
-      id: pharmacy.id,
-      name: pharmacy.name,
-      lat: pharmacy.contactInfo.latitude,
-      lng: pharmacy.contactInfo.longitude,
-    };
-  });
+const MapSearch = ({ defaultPharmacies }: { defaultPharmacies?: any }) => {
+  const [locations, setLocations] = useState<
+    { id: string; name: string; lat: number; lng: number }[]
+  >([]);
 
   const mapRef = useRef<maplibregl.Map | null>(null);
   const [userLocation, setUserLocation] = useState<{
@@ -36,9 +32,43 @@ const MapSearch = ({ data }: any) => {
   const handleDialogClose = () => {
     setIsDialogOpen(false); // Close the dialog
   };
-
+  useEffect(() => {
+    if (defaultPharmacies) {
+      setLocations(
+        defaultPharmacies.map((drug: any) => {
+          const pharmacy = drug.pharmacy;
+          return {
+            id: pharmacy.id,
+            name: pharmacy.name,
+            lat: pharmacy.contactInfo.latitude,
+            lng: pharmacy.contactInfo.longitude,
+            address: pharmacy?.contactInfo?.address,
+          };
+        })
+      );
+    } else {
+      // fetch pharmacies
+      fetchPharmacies()
+        .then((response) => {
+          console.log("Fetched pharmacies:", response.data);
+          setLocations(
+            response.data.map((pharmacy: PharmacyProfile) => ({
+              id: pharmacy.id,
+              name: pharmacy.name,
+              lat: pharmacy.contactInfo.latitude,
+              lng: pharmacy.contactInfo.longitude,
+              address: pharmacy.contactInfo.address,
+            }))
+          );
+        })
+        .catch((error) => {
+          console.error("Error fetching pharmacies:", error);
+        });
+    }
+  }, []);
   useEffect(() => {
     // Get the user's current location using the Geolocation API
+    if (locations.length === 0) return;
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -94,7 +124,7 @@ const MapSearch = ({ data }: any) => {
     map.fitBounds(bounds, { padding: 40 });
 
     return () => map.remove();
-  }, [isDialogOpen]);
+  }, [locations, isDialogOpen]);
 
   useEffect(() => {
     if (userLocation && mapRef.current) {
@@ -118,7 +148,7 @@ const MapSearch = ({ data }: any) => {
         .setPopup(new maplibregl.Popup({ offset: 25 }).setText("Your Location"))
         .addTo(map);
     }
-  }, [userLocation]);
+  }, [locations, userLocation]);
 
   return (
     <>

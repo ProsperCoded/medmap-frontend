@@ -130,7 +130,7 @@ const Directions = () => {
       >
         <div className="mb-10">
           <h1 className="text-3xl">
-            Directions to <span className="heading">{pharmacy?.name}</span>
+            Directions: 
           </h1>
           <p className="text-gray-500 text-sm">{pharmacy?.address}</p>
         </div>

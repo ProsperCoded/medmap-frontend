@@ -15,7 +15,25 @@ export const fetchUserProfile = async (): Promise<UserProfile | null> => {
     return null;
   }
 };
-
+export const fetchPharmacies = async (): Promise<
+  Response<PharmacyProfile[]>
+> => {
+  try {
+    const response = await api.get<Response<PharmacyProfile[]>>("/pharmacy");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching pharmacies:", error);
+    return {
+      status: "error",
+      message: "Failed to fetch pharmacies",
+      data: [],
+      error: {
+        cause: "Unknown error",
+        statusCode: 500,
+      },
+    };
+  }
+};
 export const fetchPharmacyProfile =
   async (): Promise<PharmacyProfile | null> => {
     try {
@@ -39,7 +57,7 @@ export const updatePharmacyProfile = async (
   formData: FormData
 ): Promise<Response<PharmacyProfile>> => {
   try {
-    const response = await api.patch<Response<PharmacyProfile>>(
+    const response = await api.put<Response<PharmacyProfile>>(
       `/pharmacy/${id}`,
       formData,
       {
