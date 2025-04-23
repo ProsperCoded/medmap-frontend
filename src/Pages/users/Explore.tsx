@@ -15,6 +15,8 @@ const Explore = () => {
     lng: number;
   } | null>(null);
 
+  
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,13 +34,6 @@ const Explore = () => {
       console.error("Geolocation is not supported by this browser.");
     }
   }, []);
-
-  const locations = pharmacies.map((pharmacy) => ({
-    id: pharmacy.id,
-    name: pharmacy.name,
-    lat: pharmacy.lat,
-    lng: pharmacy.lng,
-  }));
 
   const handleDirections = (pharmacy: {
     id: number;

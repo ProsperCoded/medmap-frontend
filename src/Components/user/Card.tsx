@@ -20,7 +20,7 @@ interface DrugData {
 }
 
 interface CardProps {
-  drug: DrugData;
+  drug: any | DrugData;
   userlat: number | undefined;
   userlng: number | undefined;
   pharmlag: number;

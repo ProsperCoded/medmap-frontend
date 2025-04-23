@@ -1,10 +1,10 @@
-import { use, useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 import Navbar from "../../Ui/Navbar";
 import Card from "../../Components/user/Card";
 import { useNavigate, useLocation } from "react-router-dom";
-import { motion } from "framer-motion";
-import { getMed } from "../../api/Client/search.api";
+import { getMed } from "../../api/search.api";
 import MapSearch from "../../Components/user/Map_Search";
+import { motion } from "framer-motion";
 import { Drug } from "../../lib/Types/response.type"; // Update this import path if needed
 
 const SearchPage = () => {
@@ -143,7 +143,7 @@ const SearchPage = () => {
         `/directions/${pharmacy.id}/${userLocation.lat}/${userLocation.lng}/${pharmacy.lat}/${pharmacy.lng}`
       );
     }
-    console.log(results[0].pharmacy.contactInfo.id);
+    console.log(results[0]);
   };
 
   return (

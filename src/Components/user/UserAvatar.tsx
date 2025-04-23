@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { LogOut, User, Settings } from "lucide-react";
 
 const UserAvatar = () => {
-  const { user, logout, isAuthenticated } = useAuth();
+  const { user, logout, isAuthenticated, userType } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -17,17 +17,15 @@ const UserAvatar = () => {
       return `${user.firstname.charAt(0)}${user.lastname.charAt(
         0
       )}`.toUpperCase();
-    } else if ("user" in user) {
-      // Auth type
-      return `${user.user.firstname.charAt(0)}${user.user.lastname.charAt(
-        0
-      )}`.toUpperCase();
-    } else if ("data" in user && user.data) {
+    } else if ("name" in user) {
       // PharmacyProfile type
-      const name = user.data.name || "";
-      return name.charAt(0).toUpperCase();
+      const names = user.name.split(" ");
+      if (names.length >= 2) {
+        return `${names[0].charAt(0)}${names[1].charAt(0)}`.toUpperCase();
+      } else if (names.length === 1) {
+        return `${names[0].charAt(0)}`.toUpperCase();
+      }
     }
-
     return "?";
   };
 
@@ -38,12 +36,9 @@ const UserAvatar = () => {
     if ("firstname" in user && "lastname" in user) {
       // UserProfile type
       return `${user.firstname} ${user.lastname}`;
-    } else if ("user" in user) {
-      // Auth type
-      return `${user.user.firstname} ${user.user.lastname}`;
-    } else if ("data" in user && user.data) {
+    } else if ("name" in user) {
       // PharmacyProfile type
-      return user.data.name || "Pharmacy";
+      return user.name;
     }
 
     return "User";
@@ -53,15 +48,9 @@ const UserAvatar = () => {
   const getUserEmail = () => {
     if (!user) return "";
 
-    if ("email" in user) {
-      // UserProfile type
+    // Both UserProfile and PharmacyProfile might have email, check if it exists
+    if ("email" in user && user.email) {
       return user.email;
-    } else if ("user" in user) {
-      // Auth type
-      return user.user.email;
-    } else if ("data" in user && user.data) {
-      // PharmacyProfile type
-      return user.data.email || "";
     }
 
     return "";
@@ -112,7 +101,7 @@ const UserAvatar = () => {
 
           <div className="py-1">
             <Link
-              to="/profile"
+              to="/pharmacy/profile"
               className="flex items-center hover:bg-gray-100 px-4 py-2 text-gray-700 hover:text-[#22c3dd] text-sm"
               onClick={() => setDropdownOpen(false)}
             >
@@ -120,12 +109,12 @@ const UserAvatar = () => {
               Your Profile
             </Link>
             <Link
-              to="/settings"
+              to="/pharmacy/dashboard"
               className="flex items-center hover:bg-gray-100 px-4 py-2 text-gray-700 hover:text-[#22c3dd] text-sm"
               onClick={() => setDropdownOpen(false)}
             >
               <Settings size={16} className="mr-2" />
-              Settings
+              Dashboard
             </Link>
           </div>
 

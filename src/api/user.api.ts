@@ -1,5 +1,5 @@
-import { Response, UserProfile } from "../../lib/Types/response.type";
-import { api } from "../base.api";
+import { Response, UserProfile } from "../lib/Types/response.type";
+import { api } from "./base.api";
 
 export const fetchUserProfile = async (): Promise<UserProfile | null> => {
   try {
@@ -9,7 +9,7 @@ export const fetchUserProfile = async (): Promise<UserProfile | null> => {
       return response.data.data;
     }
 
-    console.log(response)
+    console.log(response);
     return null;
   } catch (error) {
     console.error("Error fetching user profile:", error);

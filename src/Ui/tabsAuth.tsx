@@ -2,11 +2,11 @@ import * as React from "react";
 import { AppBar, Tabs, Tab, Typography, Box } from "@mui/material";
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
-import { userLogin } from "../api/Client/auth.api";
+import { userLogin } from "../api/auth.api";
 import { toast } from "react-hot-toast";
 import { storeSession } from "../lib/utils";
 import { useAuth } from "../context/authContext";
-import { pharmacyLogin } from "../api/Pharmacy/auth.api";
+import { pharmacyLogin } from "../api/auth.api";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -61,7 +61,7 @@ const ClientLoginForm = () => {
         toast.success(response.message);
         setUser(response.data);
         setIsAuthenticated(true);
-        storeSession(response.data.token);
+        storeSession(response.data.token, "user");
         navigate("/homepage");
       }
     } catch (error) {
@@ -150,7 +150,7 @@ const PharmacyLoginForm = () => {
         toast.success(response.message);
         setUser(response.data);
         setIsAuthenticated(true);
-        storeSession(response.data.token);
+        storeSession(response.data.token, "pharmacy");
         navigate("/homepage");
       }
     } catch (error) {

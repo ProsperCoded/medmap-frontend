@@ -9,14 +9,7 @@ export type Response<T> = {
 };
 
 export interface Auth {
-  user: {
-    id: string;
-    firstname: string;
-    lastname: string;
-    email: string;
-    createdAt: string;
-    updatedAt: string;
-  };
+  user: UserProfile;
   token: string;
 }
 
@@ -57,33 +50,33 @@ export interface UserProfile {
 }
 
 export interface PharmacyProfile {
-  message: string;
-  data: {
+  id: string;
+  name: string;
+  email: string;
+  description: string;
+  logoUrl: string;
+  shopImageUrl: string;
+  createdAt: string;
+  updatedAt: string;
+  contactInfo: {
     id: string;
-    name: string;
-    email: string;
-    description: string;
-    logoUrl: string;
-    shopImageUrl: string;
-    createdAt: string;
-    updatedAt: string;
-    contactInfo: {
-      id: string;
-      address: string;
-      phone: string;
-      state: string;
-      country: string;
-      longitude: number;
-      latitude: number;
-      pharmacyId: string;
-    };
+    address: string;
+    phone: string;
+    state: string;
+    country: string;
+    longitude: number;
+    latitude: number;
+    pharmacyId: string;
   };
 }
 
 export interface Drug {
   id: string;
   name: string;
-  description: string;
+  description?: string;
+  composition?: string;
+  manufacturer?: string;
+  uses?: string[];
   sideEffects: string[];
   pharmacyId: string;
   expiryDate: string;
@@ -110,11 +103,17 @@ export interface Drug {
       pharmacyId: string;
     };
   };
-  illnessDrugs: {
-    illness: string;
+  illnessDrugs?: {
+    illnessId: string;
+    illness: Illness;
   }[];
 }
-
+export interface Illness {
+  id: string;
+  name: string;
+  description: string;
+  precautions: string[];
+}
 export interface DrugResponse {
   message: string;
   data: {
@@ -126,4 +125,28 @@ export interface DrugResponse {
       totalPages: number;
     };
   };
+}
+
+export interface PharmacyListResponse {
+  message: string;
+  data: {
+    id: string;
+    name: string;
+    email: string;
+    description: string;
+    logoUrl: string;
+    shopImageUrl: string;
+    createdAt: string;
+    updatedAt: string;
+    contactInfo: {
+      id: string;
+      address: string;
+      phone: string;
+      state: string;
+      country: string;
+      longitude: number;
+      latitude: number;
+      pharmacyId: string;
+    };
+  }[];
 }
