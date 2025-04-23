@@ -353,7 +353,7 @@ const SearchPage = () => {
                             pharmlng={drug.pharmacy.contactInfo.longitude}
                             userlat={userLocation?.lat}
                             userlng={userLocation?.lng}
-                            address={drug.pharmacy.contactInfo.address}
+                            // address={drug.pharmacy.contactInfo.address}
                             onDirectionsClick={() =>
                               handleDirections({
                                 id: drug.pharmacy.contactInfo.id,
@@ -366,7 +366,7 @@ const SearchPage = () => {
                       })}
                     </div>
                   ) : (
-                    results?.length > 0 && <MapSearch />
+                    results?.length > 0 && <MapSearch data={results} />
                   )}
                 </div>
               </div>
