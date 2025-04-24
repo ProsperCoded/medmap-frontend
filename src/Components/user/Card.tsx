@@ -89,19 +89,19 @@ const Card = ({
   }, [userlat, userlng, pharmlag, pharmlng]);
 
   return (
-    <div className="border border-gray-700 rounded-xl p-4 w-full max-w-sm text-white space-y-4">
+    <div className="space-y-3 md:space-y-4 hover:shadow-lg p-3 md:p-4 border border-gray-700 rounded-xl w-full max-w-sm text-white transition-shadow">
       <div className="flex justify-between items-start">
         <div>
-          <h2 className="text-lg text-black font-semibold line-clamp-1">
+          <h2 className="font-semibold text-black text-base md:text-lg line-clamp-1">
             {drug.pharmacy.name}
           </h2>
-          <span className="text-sm text-gray-500 font-semibold line-clamp-1">
+          <span className="font-semibold text-gray-500 text-xs md:text-sm line-clamp-1">
             {drug.name}
-          </span>{" "}
-          <p className="text-sm text-gray-400 flex items-center gap-1">
+          </span>
+          <p className="flex items-center gap-1 text-gray-400 text-xs md:text-sm">
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="h-4 w-4 text-gray-400"
+              className="w-4 h-4 text-gray-400"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -119,10 +119,10 @@ const Card = ({
                 d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
               />
             </svg>
-            {drug.pharmacy.address}
+            <span className="line-clamp-1">{drug.pharmacy.address}</span>
           </p>
         </div>
-        <span className="text-sm bg-gray-800 text-nowrap px-3 py-1 rounded-full text-white font-medium">
+        <span className="bg-gray-800 px-2 md:px-3 py-1 rounded-full font-medium text-white text-xs md:text-sm text-nowrap">
           {loading
             ? "Loading..."
             : distance !== null
@@ -134,10 +134,10 @@ const Card = ({
       <img
         src={drug.imageUrl}
         alt={drug.name}
-        className="rounded-lg object-cover w-full h-40"
+        className="rounded-lg w-full h-32 md:h-40 object-cover"
       />
 
-      <div className="text-sm text-gray-700">
+      <div className="space-y-1 text-gray-700 text-xs md:text-sm">
         <p className="line-clamp-1">
           <strong>Manufacturer:</strong> {drug.manufacturer}
         </p>
@@ -162,19 +162,23 @@ const Card = ({
         </p>
       </div>
 
-      <button
-        onClick={onDirectionsClick}
-        className="w-full bg-[#22c3dd] hover:bg-[#2494a5] text-black font-semibold py-2 rounded-lg transition"
-      >
-        Get Directions
-      </button>
-      <Button
-        variant="outlined"
-        onClick={() => navigate(`/drug_info/${drug.id}`)}
-        fullWidth
-      >
-        More Details
-      </Button>
+      <div className="flex sm:flex-row flex-col gap-2">
+        <button
+          onClick={onDirectionsClick}
+          className="bg-[#22c3dd] hover:bg-[#2494a5] py-2 rounded-lg w-full font-semibold text-white text-sm transition"
+        >
+          Get Directions
+        </button>
+        <Button
+          variant="outlined"
+          onClick={() => navigate(`/drug_info/${drug.id}`)}
+          fullWidth
+          size="small"
+          className="text-sm"
+        >
+          More Details
+        </Button>
+      </div>
     </div>
   );
 };

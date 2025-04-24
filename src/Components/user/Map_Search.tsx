@@ -155,7 +155,8 @@ const MapSearch = ({ defaultPharmacies }: { defaultPharmacies?: any }) => {
       <div
         id="map"
         style={{
-          height: "500px",
+          height: "calc(100vh - 300px)",
+          minHeight: "400px",
           width: "100%",
           borderRadius: "12px",
           overflow: "hidden",
@@ -167,7 +168,7 @@ const MapSearch = ({ defaultPharmacies }: { defaultPharmacies?: any }) => {
           isOpen={isDialogOpen}
           onClose={handleDialogClose}
           current={userLocation}
-          pharmacy={selectedPharmacy} // Pass selected pharmacy data
+          pharmacy={selectedPharmacy}
         />
       )}
     </>

@@ -223,17 +223,17 @@ const SearchPage = () => {
     <div className="min-h-screen text-white">
       <Navbar />
 
-      <div className="relative mx-auto px-4 py-6 max-w-7xl">
+      <div className="relative mx-auto px-4 py-4 md:py-6 max-w-7xl">
         {/* Back Button */}
         <motion.button
           whileHover={{ scale: 1.05, color: "#22c3dd" }}
           whileTap={{ scale: 0.95 }}
-          className="flex items-center gap-1 mb-6 text-black transition duration-200"
+          className="flex items-center gap-1 mb-4 md:mb-6 text-black transition duration-200"
           onClick={() => window.history.back()}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="w-5 h-5"
+            className="w-4 md:w-5 h-4 md:h-5"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -245,7 +245,7 @@ const SearchPage = () => {
               d="M15 19l-7-7 7-7"
             />
           </svg>
-          <span className="font-medium text-sm">Back</span>
+          <span className="font-medium text-sm md:text-base">Back</span>
         </motion.button>
 
         {/* Search Input */}
@@ -261,16 +261,14 @@ const SearchPage = () => {
             onChange={(e) => setSearchValue(e.target.value)}
             value={searchValue}
             onKeyDown={(e) => e.key === "Enter" && handleSearch(e)}
-            className="py-2 pr-4 pl-10 border border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#22c3dd] w-full text-zinc-900 transition placeholder-zinc-400"
+            className="px-4 py-2 md:py-3 pl-10 border border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#22c3dd] w-full text-zinc-900 text-sm md:text-base transition placeholder-zinc-400"
           />
           <svg
-            className="top-1/2 left-3 absolute text-zinc-400 -translate-y-1/2 transform"
+            className="top-1/2 left-3 absolute w-4 md:w-5 h-4 md:h-5 text-zinc-400 -translate-y-1/2 transform"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
-            width="20"
-            height="20"
           >
             <path
               strokeLinecap="round"
@@ -287,12 +285,12 @@ const SearchPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="flex flex-col justify-center items-center mt-10 text-center"
+            className="flex flex-col justify-center items-center mt-8 md:mt-10 px-4 text-center"
           >
-            <h2 className="mb-2 font-semibold text-gray-800 text-2xl">
+            <h2 className="mb-2 font-semibold text-gray-800 text-xl md:text-2xl">
               Search for Medications
             </h2>
-            <p className="mb-4 text-gray-600">
+            <p className="mb-4 text-gray-600 text-sm md:text-base">
               Enter the name of the medication you're looking for and find it
               easily.
             </p>
@@ -321,16 +319,16 @@ const SearchPage = () => {
       </div>
 
       {inputSearch && (
-        <div className="mx-auto px-4 py-5 max-w-7xl">
-          <div className="gap-6 lg:gap-10 grid grid-cols-12">
+        <div className="mx-auto px-4 py-4 md:py-5 max-w-7xl">
+          <div className="gap-4 md:gap-6 lg:gap-10 grid grid-cols-12">
             <div className="col-span-12 lg:col-span-3">
               <div className="top-24 sticky">
-                <p className="mb-4 font-semibold text-gray-800 text-lg break-words">
+                <p className="mb-4 font-semibold text-gray-800 text-base md:text-lg break-words">
                   {inputSearch && searchValue
                     ? `Results for "${searchValue}"`
                     : "All Available Medications"}
                 </p>
-                <p className="text-gray-600">
+                <p className="text-gray-600 text-sm">
                   Showing {(currentPage - 1) * pagination.limit + 1} -{" "}
                   {Math.min(
                     currentPage * pagination.limit,
@@ -343,15 +341,15 @@ const SearchPage = () => {
 
             <div className="col-span-12 lg:col-span-9">
               <div>
-                <div className="flex justify-between items-center mb-4">
-                  <h1 className="text-gray-900">
+                <div className="flex sm:flex-row flex-col justify-between items-center gap-3 mb-4">
+                  <h1 className="text-gray-900 text-base md:text-lg">
                     {results?.length} results found
                   </h1>
                   <div>
                     <div className="inline-flex items-center p-1 border border-gray-700 rounded-full font-medium text-sm">
                       <button
                         onClick={() => setView("list")}
-                        className={`flex items-center gap-1 px-4 py-1.5 rounded-full transition ${
+                        className={`flex items-center gap-1 px-3 md:px-4 py-1.5 rounded-full transition ${
                           view === "list"
                             ? "bg-[#22c3dd] text-white"
                             : "text-gray-400 hover:text-gray-900"
@@ -376,7 +374,7 @@ const SearchPage = () => {
 
                       <button
                         onClick={() => setView("map")}
-                        className={`flex items-center gap-1 px-4 py-1.5 rounded-full transition ${
+                        className={`flex items-center gap-1 px-3 md:px-4 py-1.5 rounded-full transition ${
                           view === "map"
                             ? "bg-[#22c3dd] text-white"
                             : "text-gray-400 hover:text-gray-900"
@@ -402,19 +400,19 @@ const SearchPage = () => {
                   </div>
                 </div>
 
-                <div className="bg-white shadow-md mt-5 p-5 border border-gray-700 rounded-xl">
+                <div className="bg-white shadow-md mt-4 p-4 md:p-5 border border-gray-700 rounded-xl">
                   {inputSearch && results?.length === 0 ? (
                     <motion.div
                       initial={{ opacity: 0, y: 30 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.6, ease: "easeOut" }}
-                      className="flex flex-col justify-center items-center col-span-12 mt-16"
+                      className="flex flex-col justify-center items-center py-8 md:py-16"
                     >
-                      <div className="md:p-8 border border-gray-100 w-full max-w-xl text-center">
-                        <h3 className="mb-4 font-bold text-gray-800 text-2xl md:text-3xl">
+                      <div className="p-4 md:p-8 border border-gray-100 w-full max-w-xl text-center">
+                        <h3 className="mb-4 font-bold text-gray-800 text-xl md:text-2xl">
                           No results found
                         </h3>
-                        <p className="text-gray-500 text-base md:text-lg leading-relaxed">
+                        <p className="text-gray-500 text-sm md:text-base leading-relaxed">
                           We couldn’t find any medication matching{" "}
                           <span className="font-semibold text-gray-700">
                             "{searchValue}"
@@ -427,7 +425,7 @@ const SearchPage = () => {
                     </motion.div>
                   ) : view === "list" ? (
                     <>
-                      <div className="gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                      <div className="gap-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
                         {results?.map((drug) => {
                           if (!drug?.pharmacy?.contactInfo) return null;
 
@@ -453,13 +451,13 @@ const SearchPage = () => {
 
                       {/* Pagination Controls */}
                       {(pagination.hasPrev || pagination.hasMore) && (
-                        <div className="flex justify-center gap-4 mt-8">
+                        <div className="flex justify-center gap-3 md:gap-4 mt-6 md:mt-8">
                           <button
                             onClick={() =>
                               setCurrentPage((prev) => Math.max(prev - 1, 1))
                             }
                             disabled={!pagination.hasPrev}
-                            className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-colors ${
+                            className={`px-3 md:px-4 py-2 rounded-lg flex items-center gap-2 text-sm transition-colors ${
                               pagination.hasPrev
                                 ? "bg-[#22c3dd] text-white hover:bg-[#1ba8c0]"
                                 : "bg-gray-200 text-gray-500 cursor-not-allowed"
@@ -483,7 +481,7 @@ const SearchPage = () => {
                           <button
                             onClick={() => setCurrentPage((prev) => prev + 1)}
                             disabled={!pagination.hasMore}
-                            className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-colors ${
+                            className={`px-3 md:px-4 py-2 rounded-lg flex items-center gap-2 text-sm transition-colors ${
                               pagination.hasMore
                                 ? "bg-[#22c3dd] text-white hover:bg-[#1ba8c0]"
                                 : "bg-gray-200 text-gray-500 cursor-not-allowed"

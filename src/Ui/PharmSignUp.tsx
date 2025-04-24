@@ -57,11 +57,9 @@ const PharmacySignUpForm = () => {
         errors.description = "Description is required.";
     }
     if (step === 2) {
-      const { address, state, country, phone } = formData.contactInfo;
-      if (!address) errors.address = "Address is required.";
-      if (!state) errors.state = "State is required.";
-      if (!country) errors.country = "Country is required.";
+      const { phone } = formData.contactInfo;
       if (!phone) errors.phone = "Phone is required.";
+      // Removing validation for commented out fields
     }
     if (step === 3) {
       const { latitude, longitude } = formData.contactInfo;
@@ -109,16 +107,16 @@ const PharmacySignUpForm = () => {
 
   return (
     <motion.div
-      className="bg-white shadow-2xl mx-auto my-10 p-8 signup-container rounded-2xl w-full max-w-md font-sans text-center"
+      className="bg-white shadow-2xl mx-auto my-6 md:my-10 p-4 signup-container md:p-8 rounded-2xl w-full max-w-md font-sans text-center"
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
     >
       <Logo />
-      <h2 className="mt-4 font-bold text-gray-800 text-3xl">
+      <h2 className="mt-4 font-bold text-gray-800 text-2xl md:text-3xl">
         Create Pharmacy Account
       </h2>
-      <p className="mt-1 text-gray-600">
+      <p className="mt-1 text-gray-600 text-sm md:text-base">
         Sign up as a{" "}
         <Link
           to={"/auth/login"}
@@ -129,7 +127,7 @@ const PharmacySignUpForm = () => {
       </p>
 
       {/* Progress Bar */}
-      <div className="mt-6 mb-4 w-full">
+      <div className="mt-4 md:mt-6 mb-3 md:mb-4 w-full">
         <div className="bg-gray-200 rounded-full h-2">
           <motion.div
             className="bg-[#22c3dd] rounded-full h-2"
@@ -145,7 +143,7 @@ const PharmacySignUpForm = () => {
         </div>
       </div>
 
-      <form className="space-y-5 mt-4 text-left">
+      <form className="space-y-4 md:space-y-5 mt-4 text-left">
         <motion.div
           key={step}
           initial={{ opacity: 0, x: 50 }}
@@ -234,12 +232,12 @@ const PharmacySignUpForm = () => {
           )}
         </motion.div>
 
-        <div className="flex justify-between gap-3 pt-4">
+        <div className="flex justify-between gap-2 md:gap-3 pt-4">
           {step > 1 && (
             <button
               type="button"
               onClick={handleBack}
-              className="flex-1 hover:bg-gray-100 py-2 border border-gray-300 rounded-lg text-gray-700 transition"
+              className="flex-1 hover:bg-gray-100 py-2 md:py-3 border border-gray-300 rounded-lg text-gray-700 text-sm transition"
             >
               Back
             </button>
@@ -248,7 +246,7 @@ const PharmacySignUpForm = () => {
             <button
               type="button"
               onClick={handleNext}
-              className="flex-1 bg-[#22c3dd] hover:bg-[#1baac5] py-2 rounded-lg text-white transition"
+              className="flex-1 bg-[#22c3dd] hover:bg-[#1baac5] py-2 md:py-3 rounded-lg text-white text-sm transition"
             >
               Next
             </button>
@@ -259,9 +257,9 @@ const PharmacySignUpForm = () => {
               type="submit"
               onClick={handleSubmit}
               disabled={isLoading}
-              className="flex-1 bg-[#22c3dd] hover:bg-[#1baac5] py-2 rounded-lg text-white transition"
+              className="flex-1 bg-[#22c3dd] hover:bg-[#1baac5] py-2 md:py-3 rounded-lg text-white text-sm transition"
             >
-              {isLoading ? "Sumbitting..." : "Sign up"}
+              {isLoading ? "Submitting..." : "Sign up"}
             </button>
           )}
         </div>

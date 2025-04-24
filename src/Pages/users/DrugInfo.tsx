@@ -72,7 +72,7 @@ const DrugDetailsPage = () => {
   return (
     <>
       <Navbar />
-      <div className="bg-gray-50 px-4 py-10 min-h-screen text-gray-800">
+      <div className="bg-gray-50 px-4 py-6 md:py-10 min-h-screen text-gray-800">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -84,14 +84,19 @@ const DrugDetailsPage = () => {
             <img
               src={data.imageUrl}
               alt={data.name}
-              className="md:w-1/2 h-72 md:h-auto object-cover"
+              className="w-full md:w-1/2 h-48 md:h-auto object-cover"
             />
-            <div className="space-y-4 bg-[#22c3dd] p-8 md:w-1/2 text-white">
-              <h1 className="font-bold text-4xl tracking-tight">{data.name}</h1>
-              <p className="text-sm leading-relaxed">{data.description}</p>
-              <div className="space-y-1">
+            <div className="space-y-4 bg-[#22c3dd] p-6 md:p-8 w-full md:w-1/2 text-white">
+              <h1 className="font-bold text-2xl md:text-4xl tracking-tight">
+                {data.name}
+              </h1>
+              <p className="text-sm md:text-base leading-relaxed">
+                {data.description}
+              </p>
+              <div className="space-y-1 text-sm md:text-base">
                 <p>
-                  <span className="font-semibold">Price:</span> ₦{data.price}
+                  <span className="font-semibold">Price:</span> ₦
+                  {data.price.toLocaleString()}
                 </p>
                 <p>
                   <span className="font-semibold">Stock:</span> {data.stocks}
@@ -105,10 +110,10 @@ const DrugDetailsPage = () => {
           </div>
 
           {/* Info Sections */}
-          <div className="space-y-8 p-8">
+          <div className="space-y-6 md:space-y-8 p-6 md:p-8">
             {/* Side Effects */}
             <Section title="Side Effects" delay={0.2}>
-              <ul className="space-y-1 text-sm list-disc list-inside">
+              <ul className="space-y-1 text-sm md:text-base list-disc list-inside">
                 {data.sideEffects.map((effect, index) => (
                   <li key={index}>{effect}</li>
                 ))}
@@ -118,7 +123,7 @@ const DrugDetailsPage = () => {
             {/* Illnesses */}
             {data.illnessDrugs && data.illnessDrugs.length > 0 && (
               <Section title="Illnesses Treated" delay={0.4}>
-                <ul className="space-y-1 text-sm list-disc list-inside">
+                <ul className="space-y-1 text-sm md:text-base list-disc list-inside">
                   {data.illnessDrugs.map((item, index) => (
                     <li key={index}>{item.illness.name}</li>
                   ))}
@@ -128,9 +133,9 @@ const DrugDetailsPage = () => {
 
             {/* Pharmacy Info */}
             <Section title="Pharmacy Info" delay={0.6}>
-              <div className="flex items-center gap-4 mb-3">
+              <div className="flex md:flex-row flex-col items-start md:items-center gap-4 mb-3">
                 <img
-                  src={data.pharmacy.logoUrl || Image} // Fallback to default logo
+                  src={data.pharmacy.logoUrl || Image}
                   alt="logo"
                   className="shadow rounded-full w-14 h-14 object-cover"
                 />
@@ -139,8 +144,10 @@ const DrugDetailsPage = () => {
                   <p className="text-gray-600 text-sm">{data.pharmacy.email}</p>
                 </div>
               </div>
-              <p className="text-sm">{data.pharmacy.description}</p>
-              <div className="space-y-1 mt-3 text-sm">
+              <p className="text-sm md:text-base">
+                {data.pharmacy.description}
+              </p>
+              <div className="space-y-1 mt-3 text-sm md:text-base">
                 <p>
                   <span className="font-semibold">Phone:</span>{" "}
                   {data.pharmacy.contactInfo.phone}
@@ -156,16 +163,16 @@ const DrugDetailsPage = () => {
           </div>
 
           {/* Buttons */}
-          <div className="space-x-4 p-8">
+          <div className="flex sm:flex-row flex-col gap-3 p-6 md:p-8">
             <button
               onClick={handleGoBack}
-              className="bg-gray-300 hover:bg-gray-400 shadow-md px-4 py-2 rounded-md text-gray-800"
+              className="bg-gray-300 hover:bg-gray-400 shadow-md px-6 py-2 rounded-md w-full sm:w-auto text-gray-800 text-sm md:text-base"
             >
               Back
             </button>
             <button
               onClick={() => handleDirections(data.pharmacy)}
-              className="bg-[#22c3dd] hover:bg-[#1da7c1] shadow-md px-4 py-2 rounded-md text-white"
+              className="bg-[#22c3dd] hover:bg-[#1da7c1] shadow-md px-6 py-2 rounded-md w-full sm:w-auto text-white text-sm md:text-base"
             >
               Get Directions
             </button>
