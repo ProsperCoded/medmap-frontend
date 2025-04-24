@@ -35,7 +35,7 @@ const Navbar = () => {
                 className={navLinkStyle}
                 aria-label="Search Medications"
               >
-                <Search size={16} className="md:size-18" />
+                <Search size={16}  />
                 <span className="hidden sm:inline">Search</span>
               </Link>
 
@@ -45,7 +45,7 @@ const Navbar = () => {
                 className={navLinkStyle}
                 aria-label="Explore Nearby Pharmacies"
               >
-                <Compass size={16} className="md:size-18" />
+                <Compass size={16}  />
                 <span className="hidden sm:inline">Explore</span>
               </Link>
 
