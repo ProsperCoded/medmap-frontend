@@ -4,7 +4,7 @@ import DashboardLayout from "../../../Components/Pharmacy/DashboardLayout";
 import { DrugForm } from "../../../Components/Pharmacy/DrugForm";
 import { DrugCard } from "../../../Components/Pharmacy/DrugCard";
 import {
-  getMyDrugs,
+  getMyDrugsPaginated,
   createDrug,
   updateDrug,
   deleteDrug,
@@ -33,7 +33,10 @@ const DrugsPage = () => {
   const fetchDrugs = async () => {
     setIsLoading(true);
     try {
-      const response = await getMyDrugs({ page: currentPage, limit: 10 });
+      const response = await getMyDrugsPaginated({
+        page: currentPage,
+        limit: 10,
+      });
       if (response.status === "success") {
         setDrugs(response.data.data);
         setPagination(response.data.pagination);

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import DashboardLayout from "../../../Components/Pharmacy/DashboardLayout";
-import { getMyDrugs } from "../../../api/drug.api";
+import { getAllMyDrugs, getMyDrugsPaginated } from "../../../api/drug.api";
 import { fetchPharmacyProfile } from "../../../api/pharmacy.api";
 import type { Drug, PharmacyProfile } from "../../../lib/Types/response.type";
 import { Link } from "react-router-dom";
@@ -92,7 +92,7 @@ const DashboardPage = () => {
     const fetchData = async () => {
       try {
         const [drugsResponse, profileResponse] = await Promise.all([
-          getMyDrugs(),
+          getAllMyDrugs(),
           fetchPharmacyProfile(),
         ]);
 

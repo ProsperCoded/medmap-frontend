@@ -75,7 +75,7 @@ export const deleteDrug = async (id: string): Promise<Response<Drug>> => {
   }
 };
 
-export const getMyDrugs = async (params?: {
+export const getMyDrugsPaginated = async (params?: {
   page?: number;
   limit?: number;
 }): Promise<DrugResponse> => {
@@ -109,7 +109,25 @@ export const getMyDrugs = async (params?: {
     };
   }
 };
-
+export const getAllMyDrugs = async (): Promise<Response<Drug[]>> => {
+  try {
+    const response = await api.get<Response<Drug[]>>("/drugs/me?all=true");
+    return response.data;
+  } catch (error: any) {
+    if (error.response?.data) {
+      return error.response.data;
+    }
+    return {
+      status: "error",
+      message: "Failed to fetch drugs",
+      data: [] as Drug[],
+      error: {
+        cause: "Unknown error",
+        statusCode: 500,
+      },
+    };
+  }
+};
 export const getDrugById = async (id: string): Promise<Response<Drug>> => {
   try {
     const response = await api.get<Response<Drug>>(`/drugs/${id}`);
