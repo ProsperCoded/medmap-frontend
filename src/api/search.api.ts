@@ -33,17 +33,15 @@ export const getMed = async (med: SearchParams) => {
     console.log(response);
 
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Error fetching medications:", error);
-    return null;
+    throw new Error(error.response.data.message);
   }
 };
 
 export const getAllPharmacies = async () => {
   try {
-    const response = await api.get<Response<PharmacyListResponse>>(
-      `/pharmacy`
-    );
+    const response = await api.get<Response<PharmacyListResponse>>(`/pharmacy`);
     console.log(response);
 
     return response.data;

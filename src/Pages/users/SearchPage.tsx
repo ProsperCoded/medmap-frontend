@@ -256,14 +256,14 @@ const SearchPage = () => {
         ) */}
       </div>
 
-      {inputSearch && (
+      {
         <div className="mx-auto px-4 py-4 md:py-6 max-w-7xl">
           <div className="gap-4 md:gap-6 lg:gap-10 grid grid-cols-12">
             {/* Search Results Header - Full width on mobile, sidebar on desktop */}
             <div className="col-span-12 lg:col-span-3">
               <div className="top-24 sticky bg-white shadow-sm mb-4 lg:mb-0 p-4 border border-gray-100 rounded-xl">
                 <p className="mb-2 font-semibold text-gray-800 text-base md:text-lg break-words">
-                  {inputSearch && searchValue
+                  {searchValue
                     ? `Results for "${searchValue}"`
                     : "All Available Medications"}
                 </p>
@@ -341,7 +341,7 @@ const SearchPage = () => {
                 </div>
 
                 {/* No Results */}
-                {inputSearch && results?.length === 0 ? (
+                {results?.length === 0 ? (
                   <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -477,7 +477,7 @@ const SearchPage = () => {
             </div>
           </div>
         </div>
-      )}
+      }
     </div>
   );
 };
