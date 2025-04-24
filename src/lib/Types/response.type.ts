@@ -1,3 +1,11 @@
+export interface PaginationInfo {
+  hasMore: boolean;
+  hasPrev: boolean;
+  totalItems: number;
+  totalPages: number;
+  page: number;
+  limit: number;
+}
 export type Response<T> = {
   status: "success" | "error";
   message: string;
@@ -7,7 +15,6 @@ export type Response<T> = {
     statusCode: number;
   };
 };
-
 
 export interface Auth {
   user: UserProfile;
@@ -115,78 +122,19 @@ export interface Illness {
   description: string;
   precautions: string[];
 }
-export interface DrugResponse {
-  message: string;
-  data: {
+export interface DrugResponse
+  extends Response<{
     data: Drug[];
-    pagination: {
-      total: number;
-      page: number;
-      limit: number;
-      totalPages: number;
-    };
-  };
-}
+    pagination: PaginationInfo;
+  }> {}
 
 export interface PharmacyListResponse {
   message: string;
-  data: {
-    id: string;
-    name: string;
-    email: string;
-    description: string;
-    logoUrl: string;
-    shopImageUrl: string;
-    createdAt: string;
-    updatedAt: string;
-    contactInfo: {
-      id: string;
-      address: string;
-      phone: string;
-      state: string;
-      country: string;
-      longitude: number;
-      latitude: number;
-      pharmacyId: string;
-    };
-  }[];
+  data: PharmacyProfile[];
 }
-
 
 export interface DrugDetailResponse {
   message: string;
-  data: {
-    id: string;
-    name: string;
-    description: string;
-    sideEffects: string[];
-    pharmacyId: string;
-    expiryDate: string;
-    imageUrl: string;
-    price: number;
-    stocks: number;
-    pharmacy: {
-      id: string;
-      name: string;
-      email: string;
-      description: string;
-      logoUrl: string;
-      shopImageUrl: string;
-      createdAt: string;
-      updatedAt: string;
-      contactInfo: {
-        id: string;
-        address: string;
-        phone: string;
-        state: string;
-        country: string;
-        longitude: number;
-        latitude: number;
-        pharmacyId: string;
-      };
-    };
-    illnessDrugs: {
-      illness: string;
-    }[];
-  };
+  data: Drug[];
+  pagination: PaginationInfo;
 }

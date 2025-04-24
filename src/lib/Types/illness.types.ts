@@ -1,4 +1,5 @@
 import { Drug } from "./drug.types";
+import { PaginationInfo } from "./response.type";
 
 export interface Illness {
   id: string;
@@ -9,15 +10,6 @@ export interface Illness {
   illnessDrugs?: {
     drug: Drug;
   }[];
-}
-
-export interface PaginationInfo {
-  hasMore: boolean;
-  hasPrev: boolean;
-  totalItems: number;
-  totalPages: number;
-  page: number;
-  limit: number;
 }
 
 export interface IllnessSearchResponse {

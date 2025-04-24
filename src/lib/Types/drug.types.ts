@@ -1,6 +1,5 @@
 import { PharmacyProfile } from "./response.type";
 import { Illness } from "./illness.types";
-import { PaginationInfo } from "./illness.types";
 
 export interface Drug {
   id: string;
@@ -16,11 +15,6 @@ export interface Drug {
   illnessDrugs?: {
     illness: Illness;
   }[];
-}
-
-export interface DrugSearchResponse {
-  data: Drug[];
-  pagination: PaginationInfo;
 }
 
 export interface DrugSearchParams {

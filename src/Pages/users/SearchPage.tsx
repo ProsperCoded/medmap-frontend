@@ -20,10 +20,27 @@ const SearchPage = () => {
     lng: number;
   } | null>(null);
   const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pagination, setPagination] = useState<{
+    hasMore: boolean;
+    hasPrev: boolean;
+    totalItems: number;
+    totalPages: number;
+    page: number;
+    limit: number;
+  }>({
+    hasMore: false,
+    hasPrev: false,
+    totalItems: 0,
+    totalPages: 0,
+    page: 1,
+    limit: 10,
+  });
 
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Fetch user location
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
         const { latitude, longitude } = position.coords;
@@ -32,16 +49,36 @@ const SearchPage = () => {
     } else {
       console.error("Geolocation is not supported by this browser.");
     }
-  }, []);
+
+    // Initial data fetch without any query
+    const fetchInitialData = async () => {
+      setLoading(true);
+      try {
+        const response = await getMed({ page: currentPage });
+        if (response?.status === "success") {
+          setResults(response.data.data);
+          setPagination(response.data.pagination);
+          setInputSearch(true);
+        }
+      } catch (error) {
+        console.error("Error fetching initial data:", error);
+        setResults([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInitialData();
+  }, [currentPage]);
 
   useEffect(() => {
     const fetchData = async (query: string) => {
       setLoading(true);
       try {
-        const response = await getMed({ name: query });
+        const response = await getMed({ name: query, page: currentPage });
         if (response?.status === "success") {
           setResults(response.data.data);
-          console.log(response.data.data);
+          setPagination(response.data.pagination);
           setInputSearch(true);
         } else {
           console.error("Error fetching data:", response?.message);
@@ -50,20 +87,25 @@ const SearchPage = () => {
         }
 
         if (query.trim() === "") {
-          setInputSearch(false);
+          // Don't set inputSearch to false when query is empty
+          // Instead fetch all results
+          const allResponse = await getMed({ page: currentPage });
+          if (allResponse?.status === "success") {
+            setResults(allResponse.data.data);
+            setPagination(allResponse.data.pagination);
+            setInputSearch(true);
+          }
         }
-
-        console.log("results: ", results);
       } catch (error) {
         console.error("Error fetching data:", error);
         setResults([]);
-        setInputSearch(false); // Set this to false if an error occurs
+        setInputSearch(false);
       } finally {
         setLoading(false);
       }
     };
     fetchData(searchValue);
-  }, [queryValue]);
+  }, [queryValue, currentPage]);
 
   useEffect(() => {
     setSearchValue(queryValue);
@@ -119,7 +161,7 @@ const SearchPage = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="flex justify-center items-center bg-gray-100 min-h-screen">
         <div className="loader">
           <div></div>
           <div></div>
@@ -181,12 +223,12 @@ const SearchPage = () => {
     <div className="min-h-screen text-white">
       <Navbar />
 
-      <div className="px-4 py-6 relative">
+      <div className="relative mx-auto px-4 py-6 max-w-7xl">
         {/* Back Button */}
         <motion.button
           whileHover={{ scale: 1.05, color: "#22c3dd" }}
           whileTap={{ scale: 0.95 }}
-          className="flex items-center gap-1 text-black transition duration-200 mb-6"
+          className="flex items-center gap-1 mb-6 text-black transition duration-200"
           onClick={() => window.history.back()}
         >
           <svg
@@ -219,10 +261,10 @@ const SearchPage = () => {
             onChange={(e) => setSearchValue(e.target.value)}
             value={searchValue}
             onKeyDown={(e) => e.key === "Enter" && handleSearch(e)}
-            className="py-2 pr-4 pl-10 border border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#22c3dd] w-full text-zinc-900 placeholder-zinc-400 transition"
+            className="py-2 pr-4 pl-10 border border-zinc-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#22c3dd] w-full text-zinc-900 transition placeholder-zinc-400"
           />
           <svg
-            className="absolute top-1/2 left-3 text-zinc-400 transform -translate-y-1/2"
+            className="top-1/2 left-3 absolute text-zinc-400 -translate-y-1/2 transform"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -245,12 +287,12 @@ const SearchPage = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="flex flex-col items-center justify-center text-center mt-10"
+            className="flex flex-col justify-center items-center mt-10 text-center"
           >
-            <h2 className="text-2xl font-semibold text-gray-800 mb-2">
+            <h2 className="mb-2 font-semibold text-gray-800 text-2xl">
               Search for Medications
             </h2>
-            <p className="text-gray-600 mb-4">
+            <p className="mb-4 text-gray-600">
               Enter the name of the medication you're looking for and find it
               easily.
             </p>
@@ -259,7 +301,7 @@ const SearchPage = () => {
               animate={{ scale: 1 }}
               transition={{ type: "spring", stiffness: 200, damping: 15 }}
               xmlns="http://www.w3.org/2000/svg"
-              className="w-16 h-16 text-[#22c3dd] mb-4"
+              className="mb-4 w-16 h-16 text-[#22c3dd]"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -279,15 +321,27 @@ const SearchPage = () => {
       </div>
 
       {inputSearch && (
-        <div className="m-5 mt-5">
-          <div className="gap-10 grid grid-cols-12">
-            <div className="col-span-12 md:col-span-3">
-              <p className="mb-4 font-semibold text-gray-800 text-lg">
-                {inputSearch && `Results for "${searchValue}"`}
-              </p>
+        <div className="mx-auto px-4 py-5 max-w-7xl">
+          <div className="gap-6 lg:gap-10 grid grid-cols-12">
+            <div className="col-span-12 lg:col-span-3">
+              <div className="top-24 sticky">
+                <p className="mb-4 font-semibold text-gray-800 text-lg break-words">
+                  {inputSearch && searchValue
+                    ? `Results for "${searchValue}"`
+                    : "All Available Medications"}
+                </p>
+                <p className="text-gray-600">
+                  Showing {(currentPage - 1) * pagination.limit + 1} -{" "}
+                  {Math.min(
+                    currentPage * pagination.limit,
+                    pagination.totalItems
+                  )}{" "}
+                  of {pagination.totalItems} results
+                </p>
+              </div>
             </div>
 
-            <div className="col-span-12 md:col-span-9">
+            <div className="col-span-12 lg:col-span-9">
               <div>
                 <div className="flex justify-between items-center mb-4">
                   <h1 className="text-gray-900">
@@ -348,16 +402,16 @@ const SearchPage = () => {
                   </div>
                 </div>
 
-                <div className="bg-white shadow-md m-3 mt-5 p-5 border border-gray-700 rounded-xl">
+                <div className="bg-white shadow-md mt-5 p-5 border border-gray-700 rounded-xl">
                   {inputSearch && results?.length === 0 ? (
                     <motion.div
                       initial={{ opacity: 0, y: 30 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.6, ease: "easeOut" }}
-                      className="col-span-12 flex flex-col items-center justify-center mt-16"
+                      className="flex flex-col justify-center items-center col-span-12 mt-16"
                     >
-                      <div className="md:p-8 max-w-xl w-full text-center border border-gray-100">
-                        <h3 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4">
+                      <div className="md:p-8 border border-gray-100 w-full max-w-xl text-center">
+                        <h3 className="mb-4 font-bold text-gray-800 text-2xl md:text-3xl">
                           No results found
                         </h3>
                         <p className="text-gray-500 text-base md:text-lg leading-relaxed">
@@ -372,30 +426,86 @@ const SearchPage = () => {
                       </div>
                     </motion.div>
                   ) : view === "list" ? (
-                    <div className="gap-4 grid grid-cols-1 md:grid-cols-3">
-                      {results?.map((drug) => {
-                        if (!drug?.pharmacy?.contactInfo) return null;
+                    <>
+                      <div className="gap-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+                        {results?.map((drug) => {
+                          if (!drug?.pharmacy?.contactInfo) return null;
 
-                        return (
-                          <Card
-                            key={drug.id}
-                            drug={drug}
-                            pharmlag={drug.pharmacy.contactInfo.latitude}
-                            pharmlng={drug.pharmacy.contactInfo.longitude}
-                            userlat={userLocation?.lat}
-                            userlng={userLocation?.lng}
-                            // address={drug.pharmacy.contactInfo.address}
-                            onDirectionsClick={() =>
-                              handleDirections({
-                                id: drug.pharmacy.contactInfo.id,
-                                lat: drug.pharmacy.contactInfo.latitude,
-                                lng: drug.pharmacy.contactInfo.longitude,
-                              })
+                          return (
+                            <Card
+                              key={drug.id}
+                              drug={drug}
+                              pharmlag={drug.pharmacy.contactInfo.latitude}
+                              pharmlng={drug.pharmacy.contactInfo.longitude}
+                              userlat={userLocation?.lat}
+                              userlng={userLocation?.lng}
+                              onDirectionsClick={() =>
+                                handleDirections({
+                                  id: drug.pharmacy.contactInfo.id,
+                                  lat: drug.pharmacy.contactInfo.latitude,
+                                  lng: drug.pharmacy.contactInfo.longitude,
+                                })
+                              }
+                            />
+                          );
+                        })}
+                      </div>
+
+                      {/* Pagination Controls */}
+                      {(pagination.hasPrev || pagination.hasMore) && (
+                        <div className="flex justify-center gap-4 mt-8">
+                          <button
+                            onClick={() =>
+                              setCurrentPage((prev) => Math.max(prev - 1, 1))
                             }
-                          />
-                        );
-                      })}
-                    </div>
+                            disabled={!pagination.hasPrev}
+                            className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-colors ${
+                              pagination.hasPrev
+                                ? "bg-[#22c3dd] text-white hover:bg-[#1ba8c0]"
+                                : "bg-gray-200 text-gray-500 cursor-not-allowed"
+                            }`}
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="w-5 h-5"
+                              viewBox="0 0 20 20"
+                              fill="currentColor"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                            Previous
+                          </button>
+
+                          <button
+                            onClick={() => setCurrentPage((prev) => prev + 1)}
+                            disabled={!pagination.hasMore}
+                            className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-colors ${
+                              pagination.hasMore
+                                ? "bg-[#22c3dd] text-white hover:bg-[#1ba8c0]"
+                                : "bg-gray-200 text-gray-500 cursor-not-allowed"
+                            }`}
+                          >
+                            Next
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              className="w-5 h-5"
+                              viewBox="0 0 20 20"
+                              fill="currentColor"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                          </button>
+                        </div>
+                      )}
+                    </>
                   ) : (
                     results?.length > 0 && <MapSearch data={results} />
                   )}

@@ -1,4 +1,4 @@
-import { Response, Drug } from "../lib/Types/response.type";
+import { Response, Drug, DrugResponse } from "../lib/Types/response.type";
 import { DrugSearchResponse, DrugSearchParams } from "../lib/Types/drug.types";
 import { api } from "./base.api";
 
@@ -117,14 +117,11 @@ export const getDrugById = async (id: string): Promise<Response<Drug>> => {
 
 export const searchDrugs = async (
   params: DrugSearchParams
-): Promise<Response<DrugSearchResponse>> => {
+): Promise<DrugResponse> => {
   try {
-    const response = await api.get<Response<DrugSearchResponse>>(
-      "/drugs/search",
-      {
-        params,
-      }
-    );
+    const response = await api.get<DrugResponse>("/drugs/search", {
+      params,
+    });
     return response.data;
   } catch (error: any) {
     if (error.response?.data) {
@@ -134,7 +131,7 @@ export const searchDrugs = async (
       status: "error",
       message: "Failed to search drugs",
       data: {
-        data: [],
+        data: [] as any[],
         pagination: {
           hasMore: false,
           hasPrev: false,
