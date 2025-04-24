@@ -14,7 +14,7 @@ const SearchPage = () => {
   const queryValue = queryParams.get("query") || "";
   const [searchValue, setSearchValue] = useState(queryValue);
   const [results, setResults] = useState<Drug[]>([]);
-  const [inputSearch, setInputSearch] = useState(false);
+  const [inputSearch, setInputSearch] = useState(queryValue.trim() !== "");
   const [userLocation, setUserLocation] = useState<{
     lat: number;
     lng: number;
@@ -49,115 +49,53 @@ const SearchPage = () => {
     } else {
       console.error("Geolocation is not supported by this browser.");
     }
+  }, []);
 
-    // Initial data fetch without any query
-    const fetchInitialData = async () => {
-      setLoading(true);
-      try {
-        const response = await getMed({ page: currentPage });
-        if (response?.status === "success") {
-          setResults(response.data.data);
-          setPagination(response.data.pagination);
-          setInputSearch(true);
-        }
-      } catch (error) {
-        console.error("Error fetching initial data:", error);
-        setResults([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchInitialData();
-  }, [currentPage]);
-
-  useEffect(() => {
-    const fetchData = async (query: string) => {
-      setLoading(true);
-      try {
-        const response = await getMed({ name: query, page: currentPage });
-        if (response?.status === "success") {
-          setResults(response.data.data);
-          setPagination(response.data.pagination);
-          setInputSearch(true);
-        } else {
-          console.error("Error fetching data:", response?.message);
-          setResults([]);
-          setInputSearch(false);
-        }
-
-        if (query.trim() === "") {
-          // Don't set inputSearch to false when query is empty
-          // Instead fetch all results
-          const allResponse = await getMed({ page: currentPage });
-          if (allResponse?.status === "success") {
-            setResults(allResponse.data.data);
-            setPagination(allResponse.data.pagination);
-            setInputSearch(true);
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setResults([]);
-        setInputSearch(false);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData(searchValue);
-  }, [queryValue, currentPage]);
-
-  useEffect(() => {
-    setSearchValue(queryValue);
-  }, [queryValue]);
-
-  const fetchData = async (query: string) => {
+  const fetchData = async () => {
     setLoading(true);
     try {
-      const response = await getMed({ name: query });
-      if (response?.status === "success") {
-        setResults(response.data.data);
-        console.log(response.data.data);
+      // If there's a search query, fetch by name
+      if (searchValue.trim()) {
+        const searchResult = await getMed({
+          name: searchValue,
+          page: currentPage,
+        });
+        console.log("search responses", searchResult);
+        setResults(searchResult.data.data);
+        setPagination(searchResult.data.pagination);
         setInputSearch(true);
-      } else {
-        console.error("Error fetching data:", response?.message);
-        setResults([]);
+      }
+      // If no search query, fetch all results
+      else {
+        const allResults = await getMed({ page: currentPage });
+        console.log("all responses", allResults);
+        setResults(allResults.data.data);
+        setPagination(allResults.data.pagination);
         setInputSearch(false);
       }
-
-      if (query.trim() === "") {
-        setInputSearch(false);
-      }
-
-      console.log("results: ", results);
     } catch (error) {
       console.error("Error fetching data:", error);
       setResults([]);
-      setInputSearch(false); // Set this to false if an error occurs
+      setInputSearch(searchValue.trim() !== "");
     } finally {
       setLoading(false);
     }
   };
+  useEffect(() => {
+    fetchData();
+  }, [currentPage]);
+
+  // // Update searchValue when URL query parameter changes
+  // useEffect(() => {
+  //   setSearchValue(queryValue);
+  // }, [queryValue]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (searchValue.trim()) {
-      setInputSearch(true);
-      fetchData(searchValue);
-    } else {
-      setResults([]);
-      setInputSearch(false);
-    }
-
-    console.log("results: ", results);
+    // No need to call fetchData here as it will be triggered by the useEffect when searchValue changes
+    setInputSearch(searchValue.trim() !== "");
+    fetchData();
   };
-
-  useEffect(() => {
-    if (searchValue === "") {
-      setInputSearch(false);
-    }
-  }, [searchValue]);
 
   if (loading) {
     return (
@@ -279,7 +217,7 @@ const SearchPage = () => {
           </svg>
         </motion.div>
 
-        {/* Info Section */}
+        {/* Info Section
         {!inputSearch && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -315,15 +253,16 @@ const SearchPage = () => {
               Start typing in the search bar above to begin your search.
             </p>
           </motion.div>
-        )}
+        ) */}
       </div>
 
       {inputSearch && (
-        <div className="mx-auto px-4 py-4 md:py-5 max-w-7xl">
+        <div className="mx-auto px-4 py-4 md:py-6 max-w-7xl">
           <div className="gap-4 md:gap-6 lg:gap-10 grid grid-cols-12">
+            {/* Search Results Header - Full width on mobile, sidebar on desktop */}
             <div className="col-span-12 lg:col-span-3">
-              <div className="top-24 sticky">
-                <p className="mb-4 font-semibold text-gray-800 text-base md:text-lg break-words">
+              <div className="top-24 sticky bg-white shadow-sm mb-4 lg:mb-0 p-4 border border-gray-100 rounded-xl">
+                <p className="mb-2 font-semibold text-gray-800 text-base md:text-lg break-words">
                   {inputSearch && searchValue
                     ? `Results for "${searchValue}"`
                     : "All Available Medications"}
@@ -339,20 +278,21 @@ const SearchPage = () => {
               </div>
             </div>
 
+            {/* Results Content */}
             <div className="col-span-12 lg:col-span-9">
-              <div>
-                <div className="flex sm:flex-row flex-col justify-between items-center gap-3 mb-4">
-                  <h1 className="text-gray-900 text-base md:text-lg">
+              <div className="bg-white shadow-md rounded-xl overflow-hidden">
+                <div className="flex sm:flex-row flex-col justify-between items-center gap-3 p-4 border-gray-100 border-b">
+                  <h1 className="font-medium text-gray-900 text-base md:text-lg">
                     {results?.length} results found
                   </h1>
                   <div>
-                    <div className="inline-flex items-center p-1 border border-gray-700 rounded-full font-medium text-sm">
+                    <div className="inline-flex items-center p-1 border border-gray-200 rounded-full font-medium text-sm">
                       <button
                         onClick={() => setView("list")}
                         className={`flex items-center gap-1 px-3 md:px-4 py-1.5 rounded-full transition ${
                           view === "list"
-                            ? "bg-[#22c3dd] text-white"
-                            : "text-gray-400 hover:text-gray-900"
+                            ? "bg-[#22c3dd] text-white shadow-sm"
+                            : "text-gray-600 hover:bg-gray-100"
                         }`}
                       >
                         <svg
@@ -376,8 +316,8 @@ const SearchPage = () => {
                         onClick={() => setView("map")}
                         className={`flex items-center gap-1 px-3 md:px-4 py-1.5 rounded-full transition ${
                           view === "map"
-                            ? "bg-[#22c3dd] text-white"
-                            : "text-gray-400 hover:text-gray-900"
+                            ? "bg-[#22c3dd] text-white shadow-sm"
+                            : "text-gray-600 hover:bg-gray-100"
                         }`}
                       >
                         <svg
@@ -400,32 +340,47 @@ const SearchPage = () => {
                   </div>
                 </div>
 
-                <div className="bg-white shadow-md mt-4 p-4 md:p-5 border border-gray-700 rounded-xl">
-                  {inputSearch && results?.length === 0 ? (
-                    <motion.div
-                      initial={{ opacity: 0, y: 30 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.6, ease: "easeOut" }}
-                      className="flex flex-col justify-center items-center py-8 md:py-16"
-                    >
-                      <div className="p-4 md:p-8 border border-gray-100 w-full max-w-xl text-center">
-                        <h3 className="mb-4 font-bold text-gray-800 text-xl md:text-2xl">
-                          No results found
-                        </h3>
-                        <p className="text-gray-500 text-sm md:text-base leading-relaxed">
-                          We couldn’t find any medication matching{" "}
-                          <span className="font-semibold text-gray-700">
-                            "{searchValue}"
-                          </span>
-                          .
-                          <br />
-                          Please try a different keyword or check your spelling.
-                        </p>
-                      </div>
-                    </motion.div>
-                  ) : view === "list" ? (
-                    <>
-                      <div className="gap-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+                {/* No Results */}
+                {inputSearch && results?.length === 0 ? (
+                  <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, ease: "easeOut" }}
+                    className="flex flex-col justify-center items-center px-4 py-12"
+                  >
+                    <div className="bg-gray-50 p-6 md:p-8 border border-gray-100 rounded-xl w-full max-w-xl text-center">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="mx-auto mb-4 w-16 h-16 text-gray-300"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={1.5}
+                          d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                      <h3 className="mb-3 font-bold text-gray-800 text-xl md:text-2xl">
+                        No results found
+                      </h3>
+                      <p className="text-gray-500 text-sm md:text-base leading-relaxed">
+                        We couldn't find any medication matching{" "}
+                        <span className="font-semibold text-gray-700">
+                          "{searchValue}"
+                        </span>
+                        .
+                        <br />
+                        Please try a different keyword or check your spelling.
+                      </p>
+                    </div>
+                  </motion.div>
+                ) : view === "list" ? (
+                  <>
+                    <div className="p-4 md:p-5">
+                      <div className="gap-4 md:gap-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
                         {results?.map((drug) => {
                           if (!drug?.pharmacy?.contactInfo) return null;
 
@@ -448,66 +403,76 @@ const SearchPage = () => {
                           );
                         })}
                       </div>
+                    </div>
 
-                      {/* Pagination Controls */}
-                      {(pagination.hasPrev || pagination.hasMore) && (
-                        <div className="flex justify-center gap-3 md:gap-4 mt-6 md:mt-8">
-                          <button
-                            onClick={() =>
-                              setCurrentPage((prev) => Math.max(prev - 1, 1))
-                            }
-                            disabled={!pagination.hasPrev}
-                            className={`px-3 md:px-4 py-2 rounded-lg flex items-center gap-2 text-sm transition-colors ${
-                              pagination.hasPrev
-                                ? "bg-[#22c3dd] text-white hover:bg-[#1ba8c0]"
-                                : "bg-gray-200 text-gray-500 cursor-not-allowed"
-                            }`}
+                    {/* Pagination Controls */}
+                    {(pagination.hasPrev || pagination.hasMore) && (
+                      <div className="flex justify-center gap-3 md:gap-4 py-6 border-gray-100 border-t">
+                        <button
+                          onClick={() =>
+                            setCurrentPage((prev) => Math.max(prev - 1, 1))
+                          }
+                          disabled={!pagination.hasPrev}
+                          className={`px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-medium transition-colors ${
+                            pagination.hasPrev
+                              ? "bg-[#22c3dd] text-white hover:bg-[#1ba8c0]"
+                              : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                          }`}
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="w-5 h-5"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
                           >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="w-5 h-5"
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                            Previous
-                          </button>
+                            <path
+                              fillRule="evenodd"
+                              d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                          Previous
+                        </button>
 
-                          <button
-                            onClick={() => setCurrentPage((prev) => prev + 1)}
-                            disabled={!pagination.hasMore}
-                            className={`px-3 md:px-4 py-2 rounded-lg flex items-center gap-2 text-sm transition-colors ${
-                              pagination.hasMore
-                                ? "bg-[#22c3dd] text-white hover:bg-[#1ba8c0]"
-                                : "bg-gray-200 text-gray-500 cursor-not-allowed"
-                            }`}
-                          >
-                            Next
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="w-5 h-5"
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                          </button>
+                        <div className="flex items-center">
+                          <span className="px-3 py-2 text-gray-700 text-sm">
+                            Page {pagination.page} of {pagination.totalPages}
+                          </span>
                         </div>
-                      )}
-                    </>
-                  ) : (
-                    results?.length > 0 && <MapSearch data={results} />
-                  )}
-                </div>
+
+                        <button
+                          onClick={() => setCurrentPage((prev) => prev + 1)}
+                          disabled={!pagination.hasMore}
+                          className={`px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-medium transition-colors ${
+                            pagination.hasMore
+                              ? "bg-[#22c3dd] text-white hover:bg-[#1ba8c0]"
+                              : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                          }`}
+                        >
+                          Next
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="w-5 h-5"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        </button>
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="w-full h-[600px]">
+                    {results?.length > 0 && (
+                      <MapSearch defaultPharmacies={results} />
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </div>
