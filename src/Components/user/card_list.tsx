@@ -9,6 +9,7 @@ interface CardListProps {
   userlng: number | undefined;
   pharmlag: number;
   pharmlng: number;
+  index: number;
   onDirectionsClick: () => void;
 }
 
@@ -19,6 +20,7 @@ const CardList = ({
   userlng,
   pharmlag,
   pharmlng,
+  index,
   onDirectionsClick,
 }: CardListProps) => {
   const [distance, setDistance] = React.useState<number | null>(null);
@@ -36,23 +38,25 @@ const CardList = ({
     const fetchDistance = async () => {
       setLoading(true);
       try {
-        const response = await axios.get(
-          `https://us1.locationiq.com/v1/directions/driving/${userlng},${userlat};${pharmlng},${pharmlag}?key=${
-            import.meta.env.VITE_LOCATION_API_KEY
-          }&overview=false`
-        );
+        setTimeout(async () => {
+          const response = await axios.get(
+            `https://us1.locationiq.com/v1/directions/driving/${userlng},${userlat};${pharmlng},${pharmlag}?key=${
+              import.meta.env.VITE_LOCATION_API_KEY
+            }&overview=false`
+          );
 
-        const data = response.data;
-        if (data?.routes?.[0]) {
-          const route = data.routes[0];
-          setDistance(route.distance / 1000); // km
-          setDuration(route.duration / 60); // mins
-          clearInterval(intervalId); // Stop retrying
-          setMessage(null);
-        }
+          const data = response.data;
+          if (data?.routes?.[0]) {
+            const route = data.routes[0];
+            setDistance(route.distance / 1000); // km
+            setDuration(route.duration / 60); // mins
+            clearInterval(intervalId); // Stop retrying
+            setMessage(null);
+          }
+        }, index * 1000);
       } catch (error: any) {
         if (error.response?.status === 429) {
-          setMessage("Too many requests, retrying...");
+          setMessage("Retrying...");
         } else {
           setMessage("Unable to fetch directions. Retrying...");
         }
@@ -62,28 +66,24 @@ const CardList = ({
       }
     };
 
-    setTimeout(() => {
-      setMessage("");
-    }, 1000);
-
     fetchDistance(); // First immediate attempt
-    intervalId = setInterval(fetchDistance, 1000); // Retry every 1s
+    // intervalId = setInterval(fetchDistance, 1000); // Retry every 1s
 
     return () => clearInterval(intervalId); // Clean up on unmount
   }, [userlat, userlng, pharmlag, pharmlng]);
 
   return (
     <div>
-      <div className="border border-gray-700 rounded-xl p-4 w-full max-w-sm text-white space-y-4 relative">
+      <div className="relative space-y-4 p-4 border border-gray-700 rounded-xl w-full max-w-sm text-white">
         <div className="flex justify-between items-start">
           <div>
-            <h2 className="md:text-lg text-black font-semibold line-clamp-1 md:w-[98%]">
+            <h2 className="md:w-[98%] font-semibold text-black md:text-lg line-clamp-1">
               {name}
             </h2>
-            <p className="text-sm  text-gray-400 flex items-center gap-1">
+            <p className="flex items-center gap-1 text-gray-400 text-sm">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-4 w-4 text-gray-400"
+                className="w-4 h-4 text-gray-400"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -105,7 +105,7 @@ const CardList = ({
             </p>
           </div>
 
-          <span className="text-sm bg-gray-800 text-nowrap px-3 py-1 rounded-full text-white font-medium">
+          <span className="bg-gray-800 px-3 py-1 rounded-full font-medium text-white text-sm text-nowrap">
             {loading
               ? "Loading..."
               : distance !== null
@@ -114,7 +114,7 @@ const CardList = ({
           </span>
         </div>
 
-        <span className="text-sm text-gray-500 italic">
+        <span className="text-gray-500 text-sm italic">
           {loading
             ? "Calculating time..."
             : duration !== null
@@ -123,7 +123,7 @@ const CardList = ({
         </span>
 
         {message && (
-          <div className="text-sm text-red-500 bg-red-100 border border-red-400 px-3 py-2 rounded-md">
+          <div className="bg-red-100 px-3 py-2 border border-red-400 rounded-md text-red-500 text-sm">
             {message}
           </div>
         )}
@@ -131,7 +131,7 @@ const CardList = ({
         <hr className="border-gray-700" />
 
         <button
-          className="w-full bg-[#22c3dd] hover:bg-[#2494a5] text-black font-semibold py-2 rounded-lg transition"
+          className="bg-[#22c3dd] hover:bg-[#2494a5] py-2 rounded-lg w-full font-semibold text-black transition"
           onClick={onDirectionsClick}
           disabled={loading}
         >

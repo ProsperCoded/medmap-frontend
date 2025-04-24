@@ -9,7 +9,7 @@ import {
   updateDrug,
   deleteDrug,
 } from "../../../api/drug.api";
-import type { Drug } from "../../../lib/Types/response.type";
+import type { Drug, PaginationInfo } from "../../../lib/Types/response.type";
 import { toast } from "react-hot-toast";
 import { Pill, Plus, Search, Loader2 } from "lucide-react";
 
@@ -20,13 +20,23 @@ const DrugsPage = () => {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [currentDrug, setCurrentDrug] = useState<Drug | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pagination, setPagination] = useState<PaginationInfo>({
+    hasMore: false,
+    hasPrev: false,
+    totalItems: 0,
+    totalPages: 0,
+    page: 1,
+    limit: 10,
+  });
 
   const fetchDrugs = async () => {
     setIsLoading(true);
     try {
-      const response = await getMyDrugs();
+      const response = await getMyDrugs({ page: currentPage, limit: 10 });
       if (response.status === "success") {
-        setDrugs(response.data);
+        setDrugs(response.data.data);
+        setPagination(response.data.pagination);
       } else {
         toast.error("Failed to fetch drugs");
       }
@@ -40,7 +50,7 @@ const DrugsPage = () => {
 
   useEffect(() => {
     fetchDrugs();
-  }, []);
+  }, [currentPage]);
 
   const handleCreateDrug = async (formData: FormData) => {
     setIsSubmitting(true);
@@ -191,16 +201,48 @@ const DrugsPage = () => {
             )}
           </div>
         ) : (
-          <div className="gap-4 grid grid-cols-1 md:grid-cols-2">
-            {filteredDrugs.map((drug) => (
-              <DrugCard
-                key={drug.id}
-                drug={drug}
-                onEdit={openEditForm}
-                onDelete={handleDeleteDrug}
-              />
-            ))}
-          </div>
+          <>
+            <div className="gap-4 grid grid-cols-1 md:grid-cols-2">
+              {filteredDrugs.map((drug) => (
+                <DrugCard
+                  key={drug.id}
+                  drug={drug}
+                  onEdit={openEditForm}
+                  onDelete={handleDeleteDrug}
+                />
+              ))}
+            </div>
+
+            {/* Pagination Controls */}
+            {(pagination.hasPrev || pagination.hasMore) && (
+              <div className="flex justify-center gap-4 mt-8">
+                <button
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.max(prev - 1, 1))
+                  }
+                  disabled={!pagination.hasPrev}
+                  className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-colors ${
+                    pagination.hasPrev
+                      ? "bg-[#22c3dd] text-white hover:bg-[#1ba8c1]"
+                      : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                  }`}
+                >
+                  Previous
+                </button>
+                <button
+                  onClick={() => setCurrentPage((prev) => prev + 1)}
+                  disabled={!pagination.hasMore}
+                  className={`px-4 py-2 rounded-lg flex items-center gap-2 transition-colors ${
+                    pagination.hasMore
+                      ? "bg-[#22c3dd] text-white hover:bg-[#1ba8c1]"
+                      : "bg-gray-100 text-gray-400 cursor-not-allowed"
+                  }`}
+                >
+                  Next
+                </button>
+              </div>
+            )}
+          </>
         )}
       </AnimatePresence>
     </DashboardLayout>

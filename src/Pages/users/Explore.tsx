@@ -138,7 +138,7 @@ const Explore = () => {
         <div className="bg-white shadow-md m-3 mt-4 mt-5 p-5 border border-gray-700 rounded-xl">
           {view === "list" ? (
             <div className="gap-4 grid grid-cols-1 md:grid-cols-3">
-              {data.map((pharmacy) => (
+              {data.map((pharmacy, index) => (
                 <CardList
                   key={pharmacy.id}
                   name={pharmacy.name}
@@ -147,6 +147,7 @@ const Explore = () => {
                   userlat={userLocation?.lat}
                   userlng={userLocation?.lng}
                   address={pharmacy.address}
+                  index={index}
                   onDirectionsClick={() => handleDirections(pharmacy)}
                 />
               ))}

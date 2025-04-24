@@ -1,5 +1,5 @@
 import { Response, Drug, DrugResponse } from "../lib/Types/response.type";
-import { DrugSearchResponse, DrugSearchParams } from "../lib/Types/drug.types";
+import { DrugSearchParams } from "../lib/Types/drug.types";
 import { api } from "./base.api";
 
 export const createDrug = async (
@@ -75,9 +75,14 @@ export const deleteDrug = async (id: string): Promise<Response<Drug>> => {
   }
 };
 
-export const getMyDrugs = async (): Promise<Response<Drug[]>> => {
+export const getMyDrugs = async (params?: {
+  page?: number;
+  limit?: number;
+}): Promise<DrugResponse> => {
   try {
-    const response = await api.get<Response<Drug[]>>("/drugs/me");
+    const response = await api.get<DrugResponse>("/drugs/me", {
+      params,
+    });
     return response.data;
   } catch (error: any) {
     if (error.response?.data) {
@@ -86,7 +91,17 @@ export const getMyDrugs = async (): Promise<Response<Drug[]>> => {
     return {
       status: "error",
       message: "Failed to fetch drugs",
-      data: [] as Drug[],
+      data: {
+        data: [] as Drug[],
+        pagination: {
+          hasMore: false,
+          hasPrev: false,
+          totalItems: 0,
+          totalPages: 0,
+          page: 1,
+          limit: 10,
+        },
+      },
       error: {
         cause: "Unknown error",
         statusCode: 500,
