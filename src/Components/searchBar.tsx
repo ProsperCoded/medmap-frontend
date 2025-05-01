@@ -36,20 +36,20 @@ const MedicationSearchBar: React.FC<MedicationSearchBarProps> = ({
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex items-center bg-white shadow-sm mx-auto border-2 border-sky-200 focus-within:border-sky-400 rounded-full w-full max-w-xl overflow-hidden"
+      className="relative flex items-center bg-white shadow-md mx-auto border-[#bbdefb] border-2 focus-within:border-[#29b6f6] rounded-full w-full max-w-xl overflow-hidden"
     >
       <input
         type="text"
         placeholder="Search for medications..."
-        className="flex-grow px-4 py-3 focus:outline-none w-full text-gray-700 text-sm md:text-base placeholder-gray-400"
+        className="flex-grow px-4 py-3 focus:outline-none w-full text-[#1a2b4a] text-sm md:text-base placeholder-[#5d8cb3]"
         value={searchQuery}
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
       />
-      <Search className="hidden md:block mx-2 w-5 h-5 text-gray-400" />
+      <Search className="hidden md:block mx-2 w-5 h-5 text-[#5d8cb3]" />
       <button
         type="submit"
-        className="bg-[#22c3dd] hover:bg-[#56c2d3] px-3 md:px-4 py-3 rounded-r-full text-white text-sm md:text-base whitespace-nowrap transition-colors"
+        className="hover:opacity-90 shadow-sm px-3 md:px-4 py-3 rounded-r-full text-white text-sm md:text-base whitespace-nowrap transition-all gradient-bg"
       >
         Search
       </button>

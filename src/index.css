@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+@import url("https://api.fontshare.com/v2/css?f[]=clash-display@600,700,500&display=swap");
 @import "tailwindcss";
 
 :root {
@@ -8,7 +10,9 @@
   --card-foreground: #070a13;
   --popover: #ffffff;
   --popover-foreground: #070a13;
-  --primary: #6fd4e3;
+  /* --primary: #6fd4e3; */
+  --primary: #1e88e5;
+  --primary-gradient: linear-gradient(135deg, #1e88e5, #00bcd4);
   --primary-foreground: #f1f8ff;
   --secondary: #b4e04f;
   --secondary-foreground: #1a1c1e;
@@ -26,14 +30,17 @@
 
 body {
   font-family: "Poppins", sans-serif;
+  background: var(--background);
+  color: var(--foreground);
 }
 
 .heading {
-  font-family: "Abril Fatface", serif;
+  font-family: "Clash Display", serif;
+  font-weight: 600;
 }
 
 .text_light {
-  color: var(--primary);
+  color: var(--secondary);
 }
 
 .text_dark {
@@ -44,6 +51,71 @@ body {
   color: var(--mid);
 }
 .bot-message a {
-  color: #22c3dd;
+  color: #29b6f6;
   text-decoration: underline;
+}
+
+/* Gradient buttons and elements */
+.gradient-bg {
+  background: var(--primary-gradient);
+}
+
+/* Animated floating elements */
+.floating-element {
+  animation: float 6s ease-in-out infinite;
+}
+
+.floating-element-slow {
+  animation: float 8s ease-in-out infinite;
+}
+
+.floating-element-fast {
+  animation: float 4s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+/* Animation for logo gradient text */
+@keyframes gradient {
+  0% {
+    background-position: 0% center;
+  }
+  50% {
+    background-position: 100% center;
+  }
+  100% {
+    background-position: 0% center;
+  }
+}
+
+.gradient-text {
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: gradient 3s linear infinite;
+}
+
+.logo-pulse {
+  animation: pulse 3s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
 }

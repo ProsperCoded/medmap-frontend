@@ -77,7 +77,7 @@ const ClientLoginForm = () => {
     <div>
       <form className="space-y-4 mt-6 text-left" onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="email" className="block mb-1 text-gray-700">
+          <label htmlFor="email" className="block mb-1 text-[#1a2b4a]">
             Email
           </label>
           <input
@@ -87,12 +87,12 @@ const ClientLoginForm = () => {
             placeholder="you@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#22c3dd] w-full"
+            className="p-3 border border-[#bbdefb] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#29b6f6] w-full"
           />
         </div>
 
         <div>
-          <label htmlFor="password" className="block mb-1 text-gray-700">
+          <label htmlFor="password" className="block mb-1 text-[#1a2b4a]">
             Password
           </label>
           <input
@@ -102,7 +102,7 @@ const ClientLoginForm = () => {
             placeholder="Enter your password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#22c3dd] w-full"
+            className="p-3 border border-[#bbdefb] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#29b6f6] w-full"
           />
         </div>
 
@@ -111,15 +111,15 @@ const ClientLoginForm = () => {
           whileTap={{ scale: 0.98 }}
           type="submit"
           disabled={isLoading}
-          className="bg-[#22c3dd] hover:bg-[#1bb2cc] p-3 rounded-lg w-full font-semibold text-white transition-all"
+          className="hover:opacity-90 shadow-sm p-3 rounded-lg w-full font-semibold text-white transition-all gradient-bg"
         >
           {isLoading ? "Submitting..." : "Sign in"}
         </motion.button>
       </form>
 
-      <p className="mt-6 text-gray-600 text-sm">
+      <p className="mt-6 text-[#5d8cb3] text-sm">
         Don&apos;t have an account?{" "}
-        <Link to="/auth/signup" className="text-[#22c3dd] hover:underline">
+        <Link to="/auth/signup" className="text-[#1e88e5] hover:underline">
           Register
         </Link>
       </p>
@@ -166,7 +166,7 @@ const PharmacyLoginForm = () => {
     <div>
       <form className="space-y-4 mt-6 text-left" onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="email" className="block mb-1 text-gray-700">
+          <label htmlFor="email" className="block mb-1 text-[#1a2b4a]">
             Business Email
           </label>
           <input
@@ -176,12 +176,12 @@ const PharmacyLoginForm = () => {
             placeholder="you@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#22c3dd] w-full"
+            className="p-3 border border-[#bbdefb] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#29b6f6] w-full"
           />
         </div>
 
         <div>
-          <label htmlFor="password" className="block mb-1 text-gray-700">
+          <label htmlFor="password" className="block mb-1 text-[#1a2b4a]">
             Password
           </label>
           <input
@@ -191,7 +191,7 @@ const PharmacyLoginForm = () => {
             placeholder="Enter your password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#22c3dd] w-full"
+            className="p-3 border border-[#bbdefb] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#29b6f6] w-full"
           />
         </div>
 
@@ -200,15 +200,15 @@ const PharmacyLoginForm = () => {
           whileTap={{ scale: 0.98 }}
           disabled={isLoading}
           type="submit"
-          className="bg-[#22c3dd] hover:bg-[#1bb2cc] p-3 rounded-lg w-full font-semibold text-white transition-all"
+          className="hover:opacity-90 shadow-sm p-3 rounded-lg w-full font-semibold text-white transition-all gradient-bg"
         >
           {isLoading ? "Submitting..." : "Sign in"}
         </motion.button>
       </form>
 
-      <p className="mt-6 text-gray-600 text-sm">
+      <p className="mt-6 text-[#5d8cb3] text-sm">
         Don&apos;t have an account?{" "}
-        <Link to="/auth/signup" className="text-[#22c3dd] hover:underline">
+        <Link to="/auth/signup" className="text-[#1e88e5] hover:underline">
           Register
         </Link>
       </p>
@@ -240,7 +240,10 @@ export default function FullWidthTabs() {
           textColor="inherit"
           sx={{
             "& .MuiTab-root": {
-              color: "#22c3dd",
+              color: "#1e88e5",
+            },
+            "& .MuiTabs-indicator": {
+              backgroundColor: "#00bcd4",
             },
           }}
           variant="fullWidth"

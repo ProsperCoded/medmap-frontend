@@ -78,25 +78,25 @@ const UserAvatar = () => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setDropdownOpen(!dropdownOpen)}
-        className="flex justify-center items-center bg-[#22c3dd] hover:bg-[#38d3ea] rounded-full focus:outline-none focus:ring-2 focus:ring-[#22c3dd] focus:ring-offset-2 w-9 h-9 font-medium text-white transition-colors duration-200"
+        className="flex justify-center items-center shadow-sm hover:shadow-md rounded-full focus:outline-none focus:ring-2 focus:ring-[#29b6f6] focus:ring-offset-2 w-9 h-9 font-medium text-white transition-all duration-200 gradient-bg"
         aria-expanded={dropdownOpen}
       >
         {getInitials()}
       </button>
 
       {dropdownOpen && (
-        <div className="right-0 z-50 absolute bg-white shadow-lg mt-2 py-2 border border-gray-200 rounded-lg w-64">
-          <div className="px-4 py-3 border-gray-100 border-b">
-            <p className="font-medium text-gray-900 text-sm">
+        <div className="right-0 z-50 absolute bg-white shadow-lg mt-2 py-2 border border-[#bbdefb] rounded-lg w-64">
+          <div className="px-4 py-3 border-[#e3f2fd] border-b">
+            <p className="font-medium text-[#1a2b4a] text-sm">
               {getDisplayName()}
             </p>
-            <p className="text-gray-500 text-xs truncate">{getUserEmail()}</p>
+            <p className="text-[#5d8cb3] text-xs truncate">{getUserEmail()}</p>
           </div>
 
           <div className="py-1">
             <Link
               to="/pharmacy/profile"
-              className="flex items-center hover:bg-gray-100 px-4 py-2 text-gray-700 hover:text-[#22c3dd] text-sm"
+              className="flex items-center hover:bg-[#e3f2fd] px-4 py-2 text-[#1a2b4a] hover:text-[#1e88e5] text-sm"
               onClick={() => setDropdownOpen(false)}
             >
               <User size={16} className="mr-2" />
@@ -104,7 +104,7 @@ const UserAvatar = () => {
             </Link>
             <Link
               to="/pharmacy/dashboard"
-              className="flex items-center hover:bg-gray-100 px-4 py-2 text-gray-700 hover:text-[#22c3dd] text-sm"
+              className="flex items-center hover:bg-[#e3f2fd] px-4 py-2 text-[#1a2b4a] hover:text-[#1e88e5] text-sm"
               onClick={() => setDropdownOpen(false)}
             >
               <Settings size={16} className="mr-2" />
@@ -112,10 +112,10 @@ const UserAvatar = () => {
             </Link>
           </div>
 
-          <div className="py-1 border-gray-100 border-t">
+          <div className="py-1 border-[#e3f2fd] border-t">
             <button
               onClick={handleLogout}
-              className="flex items-center hover:bg-gray-100 px-4 py-2 w-full text-gray-700 hover:text-red-500 text-sm"
+              className="flex items-center hover:bg-[#e3f2fd] px-4 py-2 w-full text-[#1a2b4a] hover:text-red-500 text-sm"
             >
               <LogOut size={16} className="mr-2" />
               Sign out
