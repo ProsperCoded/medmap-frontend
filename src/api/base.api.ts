@@ -2,7 +2,7 @@ import axios from "axios";
 import { getSession } from "../lib/utils";
 // Set config defaults when creating the instance
 export const api = axios.create({
-  baseURL: "https://medmap-backend.up.railway.app",
+  baseURL: "https://medmap-backend-production.up.railway.app",
   // baseURL: "http://localhost:3100",
   headers: {
     "Content-Type": "application/json",
